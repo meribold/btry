@@ -2,9 +2,9 @@
 
 _start:
     # open("/sys/class/power_supply/BAT0/charge_now", O_RDONLY)
-    mov     $2, %rax          # system call 2 is open
-    mov     $charge_now, %rdi # address of path to open
-    mov     $0, %rcx          # 0 means read-only
+    mov     $2, %rax           # system call 2 is open
+    mov     $charge_now, %rdi  # address of path to open
+    mov     $0, %rcx           # 0 means read-only
     syscall
 
     # read(fd, buffer, 8)
