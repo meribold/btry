@@ -4,4 +4,4 @@ This sometimes works on my ThinkPad X220 running Linux.  Other times the
 Usage:
 
     $ btry
-    3 Wh
+    42 Wh
