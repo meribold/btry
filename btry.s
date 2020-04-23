@@ -12,11 +12,11 @@ _start:
     xor     %rax, %rax  # system call 0 is read
     sub     $8, %rsp    # "allocate" 8 bytes of stack space
     mov     %rsp, %rsi  # save file contents read from fd on the stack
-    mov     $8, %rdx    # read up to 8 bytes
+    mov     $9, %rdx    # read up to 9 bytes
     syscall             # the number of bytes read go into %rax
 
     # convert file contents to an integer (stored in %r8)
-    sub     $1, %rax
+    sub     $1, %rax    # subtract 1 so we don't process the newline
     xor     %r8, %r8
     xor     %rcx, %rcx
     xor     %rdx, %rdx
