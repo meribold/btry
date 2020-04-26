@@ -36,6 +36,12 @@ next_char:
     div     %r9d            # div stores the quotient in %eax
     mov     %rax, %r8       # store the quotient in %r8
 
+    # compute one decimal place
+    mov     %edx, %eax     # the remainder is the new dividend
+    xor     %edx, %edx
+    mov     $100000, %r9d  # 4-byte divisor
+    div     %r9d           # div stores the quotient in %eax
+
     # put the string " Wh\n" on the stack
     dec     %rsp
     movb    $10, (%rsp)
@@ -46,7 +52,18 @@ next_char:
     dec     %rsp
     movb    $32, (%rsp)
 
-    # convert %r8 back to text
+    # convert %ax to text (just one character)
+    mov     $10, %r9b    # 1-byte divisor
+    div     %r9b         # quotient and remainder are stored in %al and %ah, respectively
+    add     $48, %ah     # convert the remainder to ASCII
+    dec     %rsp
+    mov     %ah, (%rsp)  # put the character on the stack
+
+    # put the string "." on the stack
+    dec     %rsp
+    movb    $46, (%rsp)
+
+    # convert %r8 to text
     mov     %r8, %rax
     mov     $10, %r9d  # 4-byte divisor
     xor     %r8, %r8   # we record the number of character in %r8
@@ -64,7 +81,7 @@ more:
     mov     $1, %rax      # system call 1 is write
     mov     $1, %rdi      # file handle 1 is stdout
     mov     %rsp, %rsi    # address of string to output
-    lea     4(%r8), %rdx  # number of bytes: %r8 plus 4 for " Wh\n"
+    lea     6(%r8), %rdx  # number of bytes: %r8 plus 6 for ".n Wh\n"
     syscall
 
     # exit(0)

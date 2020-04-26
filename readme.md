@@ -1,7 +1,7 @@
 ## Usage
 
     $ btry
-    42 Wh
+    30.2 Wh
 
 This *usually* works on my ThinkPad X220 running Linux.  Sometimes the
 `/sys/class/power_supply/BAT0/energy_now` file, which `btry` reads, does not exist.  This
