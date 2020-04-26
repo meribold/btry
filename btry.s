@@ -43,14 +43,8 @@ next_char:
     div     %r9d           # div stores the quotient in %eax
 
     # put the string " Wh\n" on the stack
-    dec     %rsp
-    movb    $10, (%rsp)
-    dec     %rsp
-    movb    $104, (%rsp)
-    dec     %rsp
-    movb    $87, (%rsp)
-    dec     %rsp
-    movb    $32, (%rsp)
+    sub     $4, %rsp
+    movl    $174610208, (%rsp)
 
     # convert %ax to text (just one character)
     mov     $10, %r9b    # 1-byte divisor
