@@ -96,7 +96,7 @@ _start:
     call    get_number
     call    push_number
 
-    # write(1, energy, %r8 + 4)
+    # write(1, %rsp, %r8 + 14)
     mov     $1, %rax    # system call 1 is write
     mov     $1, %rdi    # file handle 1 is stdout
     mov     %rsp, %rsi  # address of string to output
