@@ -2,8 +2,8 @@
 
 get_number:
     # open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $2, %rax           # system call 2 is open
-    mov     $0, %rsi           # 0 means read-only
+    mov     $2, %rax  # system call 2 is open
+    mov     $0, %rsi  # 0 means read-only
     syscall
 
     # read(fd, buffer, 8)
@@ -65,8 +65,8 @@ push_number:
     mov     $10, %r9d  # 4-byte divisor
 more:
     xor     %edx, %edx
-    div     %r9d        # quotient and remainder are stored in %eax and %edx, respectively
-    add     $48, %dl    # convert the remainder to ASCII
+    div     %r9d         # quotient and remainder are stored in %eax and %edx
+    add     $48, %dl     # convert the remainder to ASCII
     dec     %rsp
     mov     %dl, (%rsp)
     inc     %r10         # we record the number of character in %r10
@@ -99,9 +99,9 @@ _start:
     call    push_number
 
     # write(1, energy, %r8 + 4)
-    mov     $1, %rax      # system call 1 is write
-    mov     $1, %rdi      # file handle 1 is stdout
-    mov     %rsp, %rsi    # address of string to output
+    mov     $1, %rax    # system call 1 is write
+    mov     $1, %rdi    # file handle 1 is stdout
+    mov     %rsp, %rsi  # address of string to output
     # number of bytes: %r10 plus 14 for " Wh / ", " Wh\n", two times "." etc.
     lea     14(%r10), %rdx
     syscall
