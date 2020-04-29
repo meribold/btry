@@ -1,16 +1,15 @@
 .global _start
 
-_start:
+get_number:
     # open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
     mov     $2, %rax           # system call 2 is open
-    mov     $energy_now, %rdi  # address of path to open
-    mov     $0, %rcx           # 0 means read-only
+    mov     $0, %rsi           # 0 means read-only
     syscall
 
     # read(fd, buffer, 8)
     mov     %rax, %rdi  # open returns a file descriptor in %rax; read expects it in %rdi
     xor     %rax, %rax  # system call 0 is read
-    sub     $8, %rsp    # "allocate" 8 bytes of stack space
+    sub     $9, %rsp    # "allocate" 9 bytes of stack space
     mov     %rsp, %rsi  # save file contents read from fd on the stack
     mov     $9, %rdx    # read up to 9 bytes
     syscall             # the number of bytes read go into %rax
@@ -42,9 +41,13 @@ next_char:
     mov     $100000, %r9d  # 4-byte divisor
     div     %r9d           # div stores the quotient in %eax
 
-    # put the string " Wh\n" on the stack
-    sub     $4, %rsp
-    movl    $174610208, (%rsp)
+    # return
+    add     $9, %rsp
+    ret
+
+push_number:
+    # put the return address into %r15
+    pop     %r15
 
     # convert %ax to text (just one character)
     mov     $10, %r9b    # 1-byte divisor
@@ -60,22 +63,47 @@ next_char:
     # convert %r8 to text
     mov     %r8, %rax
     mov     $10, %r9d  # 4-byte divisor
-    xor     %r8, %r8   # we record the number of character in %r8
 more:
     xor     %edx, %edx
     div     %r9d        # quotient and remainder are stored in %eax and %edx, respectively
     add     $48, %dl    # convert the remainder to ASCII
     dec     %rsp
     mov     %dl, (%rsp)
-    inc     %r8
+    inc     %r10         # we record the number of character in %r10
     cmp     $0, %eax
     jne     more
+
+    # return
+    jmp *%r15
+
+_start:
+    # put the string " Wh\n" on the stack
+    sub     $4, %rsp
+    movl    $174610208, (%rsp)
+
+    # process the file specified by the path at $energy_full
+    mov     $energy_full, %rdi
+    call    get_number
+    call    push_number
+
+    # put the string "h / " on the stack
+    sub     $4, %rsp
+    movl    $539959400, (%rsp)
+    # put the string " W" on the stack
+    sub     $2, %rsp
+    movw    $22304, (%rsp)
+
+    # process the file specified by the path at $energy_now
+    mov     $energy_now, %rdi
+    call    get_number
+    call    push_number
 
     # write(1, energy, %r8 + 4)
     mov     $1, %rax      # system call 1 is write
     mov     $1, %rdi      # file handle 1 is stdout
     mov     %rsp, %rsi    # address of string to output
-    lea     6(%r8), %rdx  # number of bytes: %r8 plus 6 for ".n Wh\n"
+    # number of bytes: %r10 plus 14 for " Wh / ", " Wh\n", two times "." etc.
+    lea     14(%r10), %rdx
     syscall
 
     # exit(0)
@@ -83,4 +111,5 @@ more:
     xor     %rdi, %rdi  # we want return code 0
     syscall             # invoke operating system to exit
 
+energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
 energy_now: .ascii "/sys/class/power_supply/BAT0/energy_now"
