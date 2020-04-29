@@ -9,8 +9,7 @@ get_number:
     # read(fd, buffer, 8)
     mov     %rax, %rdi  # open returns a file descriptor in %rax; read expects it in %rdi
     xor     %rax, %rax  # system call 0 is read
-    sub     $9, %rsp    # "allocate" 9 bytes of stack space
-    mov     %rsp, %rsi  # save file contents read from fd on the stack
+    lea     -9(%rsp), %rsi # save file contents read from fd on the stack
     mov     $9, %rdx    # read up to 9 bytes
     syscall             # the number of bytes read go into %rax
 
@@ -21,7 +20,7 @@ get_number:
     xor     %rdx, %rdx
 next_char:
     imul    $10, %r8
-    mov     (%rsp, %rcx), %dl  # load one character/byte/digit
+    mov     -9(%rsp, %rcx), %dl  # load one character/byte/digit
     sub     $48, %dl           # convert the character from ASCII
     add     %rdx, %r8          # add this digit
     inc     %rcx
@@ -42,7 +41,6 @@ next_char:
     div     %r9d           # div stores the quotient in %eax
 
     # return
-    add     $9, %rsp
     ret
 
 push_number:
