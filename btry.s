@@ -86,11 +86,9 @@ _start:
     call    get_number
     call    push_number
 
-    # put the string "h / " on the stack
-    sub     $4, %rsp
-    movl    $539959400, (%rsp)
-    # put the string " W" on the stack
-    sub     $2, %rsp
+    # put the strings "h / " and " W" on the stack
+    sub     $6, %rsp
+    movl    $539959400, 2(%rsp)
     movw    $22304, (%rsp)
 
     # process the file specified by the path at $energy_now
