@@ -8,3 +8,7 @@ btry.o: btry.s
 .PHONY: clean
 clean:
 	rm -rf btry btry.o
+
+.PHONY: strace
+strace: btry
+	strace ./btry >/dev/null
