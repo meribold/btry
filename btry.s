@@ -9,7 +9,7 @@ get_number:
     test    %rax, %rax
     js      fail
 
-    # read(fd, buffer, 8)
+    # read(fd, buffer, 9)
     mov     %rax, %rdi # open returns a file descriptor in %rax; read expects it in %rdi
     xor     %rax, %rax # system call 0 is read
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
