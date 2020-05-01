@@ -12,3 +12,7 @@ clean:
 .PHONY: strace
 strace: btry
 	strace ./btry >/dev/null
+
+.PHONY: debug
+debug: btry
+	gdb -ex 'tb _start' -ex 'run' -ex 'layout regs' ./btry
