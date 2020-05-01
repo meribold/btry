@@ -6,6 +6,9 @@ get_number:
     xor     %rsi, %rsi # 0 means read-only
     syscall
 
+    test    %rax, %rax
+    js      fail
+
     # read(fd, buffer, 8)
     mov     %rax, %rdi # open returns a file descriptor in %rax; read expects it in %rdi
     xor     %rax, %rax # system call 0 is read
@@ -40,7 +43,7 @@ next_char:
     mov     $100000, %r9d # 4-byte divisor
     div     %r9d          # div stores the quotient in %eax
 
-    # return
+fail:
     ret
 
 push_number:
@@ -75,13 +78,18 @@ more:
     jmp *%r15
 
 _start:
+    # process the file specified by the path at $energy_full
+    mov     $energy_full, %rdi
+    call    get_number
+
+    # sometimes there are no energy_* files but charge_* files instead
+    test    %rax, %rax
+    js      charge
+
     # put the string " Wh\n" on the stack
     sub     $4, %rsp
     movl    $174610208, (%rsp)
 
-    # process the file specified by the path at $energy_full
-    mov     $energy_full, %rdi
-    call    get_number
     call    push_number
 
     # put the strings "h / " and " W" on the stack
@@ -94,6 +102,30 @@ _start:
     call    get_number
     call    push_number
 
+    jmp     print_and_exit
+
+charge:
+    # process the file specified by the path at $charge_full
+    mov     $charge_full, %rdi
+    call    get_number
+
+    # put the string " Ah\n" on the stack
+    sub     $4, %rsp
+    movl    $174604576, (%rsp)
+
+    call    push_number
+
+    # put the strings "h / " and " A" on the stack
+    sub     $6, %rsp
+    movl    $539959400, 2(%rsp)
+    movw    $16672, (%rsp)
+
+    # process the file specified by the path at $charge_now
+    mov     $charge_now, %rdi
+    call    get_number
+    call    push_number
+
+print_and_exit:
     # write(1, %rsp, %r8 + 14)
     mov     $1, %rax   # system call 1 is write
     mov     $1, %rdi   # file handle 1 is stdout
@@ -108,4 +140,6 @@ _start:
     syscall            # invoke operating system to exit
 
 energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
-energy_now: .ascii "/sys/class/power_supply/BAT0/energy_now"
+energy_now: .ascii "/sys/class/power_supply/BAT0/energy_now\0"
+charge_full: .ascii "/sys/class/power_supply/BAT0/charge_full\0"
+charge_now: .ascii "/sys/class/power_supply/BAT0/charge_now\0"
