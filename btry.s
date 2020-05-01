@@ -88,14 +88,14 @@ _start:
 
     # put the string " Wh\n" on the stack
     sub     $4, %rsp
-    movl    $174610208, (%rsp)
+    movl    $0x0a685720, (%rsp)
 
     call    push_number
 
     # put the strings "h / " and " W" on the stack
     sub     $6, %rsp
-    movl    $539959400, 2(%rsp)
-    movw    $22304, (%rsp)
+    movl    $0x202f2068, 2(%rsp)
+    movw    $0x5720, (%rsp)
 
     # process the file specified by the path at $energy_now
     mov     $energy_now, %rdi
@@ -111,14 +111,14 @@ charge:
 
     # put the string " Ah\n" on the stack
     sub     $4, %rsp
-    movl    $174604576, (%rsp)
+    movl    $0x0a684120, (%rsp)
 
     call    push_number
 
     # put the strings "h / " and " A" on the stack
     sub     $6, %rsp
-    movl    $539959400, 2(%rsp)
-    movw    $16672, (%rsp)
+    movl    $0x202f2068, 2(%rsp)
+    movw    $0x4120, (%rsp)
 
     # process the file specified by the path at $charge_now
     mov     $charge_now, %rdi
