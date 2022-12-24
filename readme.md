@@ -1,14 +1,14 @@
 ## Usage
 
     $ btry
-    30.6 Wh / 31.1 Wh
+    30.6 Wh / 31.1 Wh (98%)
 
 Sometimes there are no `energy_now` and `energy_full` files, but `charge_*` files instead
 (at least on my ThinkPad X220).  If this is the case, `btry` prints ampere hours instead
 of watt hours.
 
     $ btry
-    2.2 Ah / 2.8 Ah
+    2.2 Ah / 2.8 Ah (78%)
 
 ## Build instructions
 

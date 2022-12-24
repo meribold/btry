@@ -1,7 +1,8 @@
 .global _start
 
+# read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
-    # open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
+    # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
     mov     $2, %rax   # system call 2 is open
     xor     %rsi, %rsi # 0 means read-only
     syscall
@@ -16,26 +17,29 @@ get_number:
     mov     $9, %rdx       # read up to 9 bytes
     syscall                # the number of bytes read go into %rax
 
-    # convert file contents to an integer (stored in %r8)
+    # convert file contents to an integer (stored in %r14)
     sub     $1, %rax # subtract 1 so we don't process the newline
-    xor     %r8, %r8
+    xor     %r14, %r14
     xor     %rcx, %rcx
     xor     %rdx, %rdx
 next_char:
-    imul    $10, %r8
+    imul    $10, %r14
     mov     -9(%rsp, %rcx), %dl # load one character/byte/digit
-    sub     $48, %dl            # convert the character from ASCII
-    add     %rdx, %r8           # add this digit
+    sub     $'0, %dl            # convert the character from ASCII
+    add     %rdx, %r14          # add this digit
     inc     %rcx
     cmp     %rcx, %rax
     jne     next_char
+fail:
+    ret
 
-    # convert from microwatt to watt hours
+# prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
+# %edx, %r8d, and %r9d
+add_eax_to_output_string_as_decimal:
     xor     %edx, %edx
-    mov     %r8, %rax      # dividend
     mov     $1000000, %r9d # 4-byte divisor
     div     %r9d           # div stores the quotient in %eax
-    mov     %rax, %r8      # store the quotient in %r8
+    mov     %eax, %r8d     # copy the quotient to %r8d
 
     # compute one decimal place
     mov     %edx, %eax    # the remainder is the new dividend
@@ -43,42 +47,38 @@ next_char:
     mov     $100000, %r9d # 4-byte divisor
     div     %r9d          # div stores the quotient in %eax
 
-fail:
-    ret
-
-push_number:
-    # put the return address into %r15
-    pop     %r15
-
-    # convert %ax to text (just one character)
+    # convert %eax to text (just one character)
     mov     $10, %r9b # 1-byte divisor
     div     %r9b      # quotient and remainder are stored in %al and %ah, respectively
-    add     $48, %ah  # convert the remainder to ASCII
-    dec     %rsp
-    mov     %ah, (%rsp) # put the character on the stack
+    add     $'0, %ah  # convert the remainder to ASCII
+    dec     %r10
+    mov     %ah, %al
+    movb    %al, (%r10)
 
-    # put the string "." on the stack
-    dec     %rsp
-    movb    $46, (%rsp)
+    dec     %r10
+    movb    $'., (%r10)
+    mov     %r8d, %eax
+    call    add_eax_to_output_string
+    ret
 
-    # convert %r8 to text
-    mov     %r8, %rax
+# prepend %eax to the output string; invalidates %eax, %edx, and %r9d
+add_eax_to_output_string:
     mov     $10, %r9d # 4-byte divisor
-more:
+more_digits:
     xor     %edx, %edx
     div     %r9d      # quotient and remainder are stored in %eax and %edx, respectively
-    add     $48, %dl  # convert the remainder to ASCII
-    dec     %rsp
-    mov     %dl, (%rsp)
-    inc     %r10      # we record the number of character in %r10
+    add     $'0, %dl  # convert the remainder to ASCII
+    dec     %r10
+    mov     %dl, (%r10)
     cmp     $0, %eax
-    jne     more
-
-    # return
-    jmp *%r15
+    jne     more_digits
+    ret
 
 _start:
-    # process the file specified by the path at $energy_full
+    mov     $output, %r10
+    add     $24, %r10
+
+    # read the contents of the file specified by the path at $energy_full into %r14
     mov     $energy_full, %rdi
     call    get_number
 
@@ -86,52 +86,49 @@ _start:
     test    %rax, %rax
     js      charge
 
-    # put the string " Wh\n" on the stack
-    sub     $4, %rsp
-    movl    $0x0a685720, (%rsp)
-
-    call    push_number
-
-    # put the strings "h / " and " W" on the stack
-    sub     $6, %rsp
-    movl    $0x202f2068, 2(%rsp)
-    movw    $0x5720, (%rsp)
-
-    # process the file specified by the path at $energy_now
+    # copy the result of get_number (the energy_full value) and read the $energy_now file
+    # (store the contents in %r14)
+    mov     %r14d, %r15d
     mov     $energy_now, %rdi
     call    get_number
-    call    push_number
 
-    jmp     print_and_exit
+    mov     $0x20685720, %r11 # " Wh "
 
-charge:
-    # process the file specified by the path at $charge_full
-    mov     $charge_full, %rdi
-    call    get_number
+back_from_charge:
+    # calculate the remaining energy as a percentage
+    xor     %rdx, %rdx
+    mov     %r14, %rax
+    imul    $100, %rax
+    div     %r15
+    call    add_eax_to_output_string
 
-    # put the string " Ah\n" on the stack
-    sub     $4, %rsp
-    movl    $0x0a684120, (%rsp)
+    # prepend "(" and then " Wh " (or " Ah ") to the output string
+    dec     %r10
+    movb    $'(, (%r10)
+    sub     $4, %r10
+    movl    %r11d, (%r10)
 
-    call    push_number
+    # prepend the energy_full (or charge_full) value to the output string
+    mov     %r15d, %eax
+    call    add_eax_to_output_string_as_decimal
 
-    # put the strings "h / " and " A" on the stack
-    sub     $6, %rsp
-    movl    $0x202f2068, 2(%rsp)
-    movw    $0x4120, (%rsp)
+    # prepend "/ " and then " Wh " (or " Ah ") to the output string
+    sub     $2, %r10
+    movw    $0x202f, (%r10)
+    sub     $4, %r10
+    movl    %r11d, (%r10)
 
-    # process the file specified by the path at $charge_now
-    mov     $charge_now, %rdi
-    call    get_number
-    call    push_number
+    # prepend the energy_now (or charge_now) value to the output string
+    mov     %r14d, %eax
+    call    add_eax_to_output_string_as_decimal
 
-print_and_exit:
-    # write(1, %rsp, %r8 + 14)
+    # write(1, %rsp, $output + 27 - %r10)
     mov     $1, %rax   # system call 1 is write
     mov     $1, %rdi   # file handle 1 is stdout
-    mov     %rsp, %rsi # address of string to output
-    # number of bytes: %r10 plus 14 for " Wh / ", " Wh\n", two times "." etc.
-    lea     14(%r10), %rdx
+    mov     %r10, %rsi # address of string to output
+    mov     $output, %rdx
+    add     $27, %rdx
+    sub     %r10, %rdx
     syscall
 
     # exit(0)
@@ -139,7 +136,20 @@ print_and_exit:
     xor     %rdi, %rdi # we want return code 0
     syscall            # invoke operating system to exit
 
+charge:
+    mov     $charge_full, %rdi
+    call    get_number
+    mov     %r14d, %r15d
+    mov     $charge_now, %rdi
+    call    get_number
+    mov     $0x20684120, %r11 # " Ah "
+    jmp     back_from_charge
+
 energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
 energy_now: .ascii "/sys/class/power_supply/BAT0/energy_now\0"
 charge_full: .ascii "/sys/class/power_supply/BAT0/charge_full\0"
 charge_now: .ascii "/sys/class/power_supply/BAT0/charge_now\0"
+
+.data
+
+output: .ascii "111.1 Wh / 111.1 Wh (100%)\n"
