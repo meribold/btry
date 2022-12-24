@@ -1,13 +1,9 @@
-# We could also build `btry` in one step with `gcc -nostdlib`.
-btry: btry.o
-	ld $^ -o $@
-
-btry.o: btry.s
-	gcc -c $^
+btry: btry.s
+	gcc $^ -nostdlib -no-pie -o $@
 
 .PHONY: clean
 clean:
-	rm -rf btry btry.o
+	rm -rf btry
 
 .PHONY: strace
 strace: btry
