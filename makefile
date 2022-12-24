@@ -1,3 +1,7 @@
+.PHONY: run
+run: btry
+	./btry
+
 btry: btry.s
 	gcc $^ -nostdlib -no-pie -o $@
 
