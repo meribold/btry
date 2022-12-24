@@ -3,7 +3,7 @@ run: btry
 	./btry
 
 btry: btry.s
-	gcc $^ -nostdlib -no-pie -o $@
+	gcc $^ -nostdlib -no-pie -s -Wl,-z,noseparate-code,--build-id=none -o $@
 
 btry-debug: btry.s
 	gcc $^ -nostdlib -no-pie -g -o $@
