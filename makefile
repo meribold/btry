@@ -5,14 +5,17 @@ run: btry
 btry: btry.s
 	gcc $^ -nostdlib -no-pie -o $@
 
+btry-debug: btry.s
+	gcc $^ -nostdlib -no-pie -g -o $@
+
 .PHONY: clean
 clean:
-	rm -rf btry
+	rm -rf btry btry-debug
 
 .PHONY: strace
 strace: btry
 	strace ./btry >/dev/null
 
 .PHONY: debug
-debug: btry
-	gdb -ex 'tb _start' -ex 'run' -ex 'layout regs' ./btry
+debug: btry-debug
+	gdb -ex 'tb _start' -ex 'run' -ex 'layout regs' $<
