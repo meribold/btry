@@ -9,6 +9,7 @@ btry: btry.s
 	@# segment writable in addition to being executable and readable and allows us to use
 	@# a single segment for both code and data.
 	printf '\x07' | dd of=btry bs=1 seek=68 count=1 conv=notrunc
+	./optimize.py
 
 btry-debug: btry.s
 	gcc $^ -nostdlib -no-pie -g -o $@
