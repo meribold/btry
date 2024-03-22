@@ -149,7 +149,4 @@ energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
 energy_now: .ascii "/sys/class/power_supply/BAT0/energy_now\0"
 charge_full: .ascii "/sys/class/power_supply/BAT0/charge_full\0"
 charge_now: .ascii "/sys/class/power_supply/BAT0/charge_now\0"
-
-.data
-
 output: .ascii "111.1 Wh / 111.1 Wh (100%)\n"

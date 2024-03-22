@@ -8,13 +8,13 @@ ELF Header:
   Type:                              EXEC (Executable file)
   Machine:                           Advanced Micro Devices X86-64
   Version:                           0x1
-  Entry point address:               0x4001ef
+  Entry point address:               0x4001b7
   Start of program headers:          64 (bytes into file)
   Start of section headers:          0 (bytes into file)
   Flags:                             0x0
   Size of this header:               64 (bytes)
   Size of program headers:           56 (bytes)
-  Number of program headers:         4
+  Number of program headers:         3
   Size of section headers:           0 (bytes)
   Number of section headers:         0
   Section header string table index: 0
@@ -27,12 +27,10 @@ Program Headers:
   Type           Offset             VirtAddr           PhysAddr
                  FileSiz            MemSiz              Flags  Align
   LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
-                 0x000000000000035c 0x000000000000035c  R E    0x1000
-  LOAD           0x000000000000035c 0x000000000040135c 0x000000000040135c
-                 0x000000000000001b 0x000000000000001b  RW     0x1000
-  NOTE           0x0000000000000120 0x0000000000400120 0x0000000000400120
+                 0x000000000000033f 0x000000000000033f  RWE    0x1000
+  NOTE           0x00000000000000e8 0x00000000004000e8 0x00000000004000e8
                  0x0000000000000030 0x0000000000000030  R      0x8
-  GNU_PROPERTY   0x0000000000000120 0x0000000000400120 0x0000000000400120
+  GNU_PROPERTY   0x00000000000000e8 0x00000000004000e8 0x00000000004000e8
                  0x0000000000000030 0x0000000000000030  R      0x8
 
 There is no dynamic section in this file.
@@ -44,7 +42,7 @@ Dynamic symbol information is not available for displaying symbols.
 
 No version information found in this file.
 
-Displaying notes found at file offset 0x00000120 with length 0x00000030:
+Displaying notes found at file offset 0x000000e8 with length 0x00000030:
   Owner                Data size 	Description
   GNU                  0x00000020	NT_GNU_PROPERTY_TYPE_0
       Properties: x86 feature used: x86

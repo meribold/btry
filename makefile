@@ -5,6 +5,10 @@ run: btry
 btry: btry.s
 	gcc $^ -nostdlib -no-pie -s -Wl,-z,noseparate-code,--build-id=none -o $@
 	objcopy --strip-section-headers btry
+	@# Change the first program header's `p_flags` byte from 5 to 7.  This makes the
+	@# segment writable in addition to being executable and readable and allows us to use
+	@# a single segment for both code and data.
+	printf '\x07' | dd of=btry bs=1 seek=68 count=1 conv=notrunc
 
 btry-debug: btry.s
 	gcc $^ -nostdlib -no-pie -g -o $@
