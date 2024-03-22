@@ -4,7 +4,7 @@ run: btry
 
 btry: btry.s
 	gcc $^ -nostdlib -no-pie -s -Wl,-z,noseparate-code,--build-id=none -o $@
-	objcopy --remove-section=.note.gnu.property btry
+	objcopy --strip-section-headers btry
 
 btry-debug: btry.s
 	gcc $^ -nostdlib -no-pie -g -o $@
