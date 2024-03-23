@@ -13,6 +13,15 @@ del btry_bytes[0x78 : 0x78 + 0x38 * 2]
 # described.
 del btry_bytes[0x78 : 0x78 + 0x30]
 
+# Remove data at the very end of the executable.
+del btry_bytes[-len("111.1 Wh / 111.1 Wh (100%)\n") :]
+# Add the last three characters of the string `btry` will print in a location of the ELF
+# header where it won't cause damage.
+btry_bytes[0x2D:0x30] = b"%)\n"
+# Change references to `$output` (which we removed) so that we will build the output
+# string by overwriting parts of the ELF header instead.
+btry_bytes = btry_bytes.replace(b"\x24\x03\x40\x00", b"\x15\x00\x40\x00")
+
 # Update `e_entry` of the ELF header.
 e_entry = struct.unpack("<Q", btry_bytes[0x18:0x20])[0] - 0x38 * 2 - 0x30
 btry_bytes[0x18:0x20] = struct.pack("<Q", e_entry)
@@ -27,10 +36,8 @@ btry_bytes[0x68:0x70] = struct.pack("<Q", len(btry_bytes))
 # Update some addresses.  This is really brittle and likely to break for all kinds of
 # reasons.  FIXME?!
 for address in (
-    b"\x24\x03\x40\x00",
     b"\x82\x02\x40\x00",
     b"\xab\x02\x40\x00",
-    b"\x24\x03\x40\x00",
     b"\xd3\x02\x40\x00",
     b"\xfc\x02\x40\x00",
 ):

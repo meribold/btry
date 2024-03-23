@@ -10,7 +10,7 @@ ELF Header:
   Version:                           0x1
   Entry point address:               0x400117
   Start of program headers:          64 (bytes into file)
-  Start of section headers:          0 (bytes into file)
+  Start of section headers:          732157096354643968 (bytes into file)
   Flags:                             0x0
   Size of this header:               64 (bytes)
   Size of program headers:           56 (bytes)
@@ -19,21 +19,12 @@ ELF Header:
   Number of section headers:         0
   Section header string table index: 0
 
-There are no sections in this file.
-
 There are no section groups in this file.
 
 Program Headers:
   Type           Offset             VirtAddr           PhysAddr
                  FileSiz            MemSiz              Flags  Align
   LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
-                 0x000000000000029f 0x000000000000029f  RWE    0x1000
+                 0x0000000000000284 0x0000000000000284  RWE    0x1000
 
 There is no dynamic section in this file.
-
-There are no relocations in this file.
-No processor specific unwind information to decode
-
-Dynamic symbol information is not available for displaying symbols.
-
-No version information found in this file.
