@@ -75,8 +75,7 @@ more_digits:
     ret
 
 _start:
-    mov     $output, %r10
-    add     $24, %r10
+    mov     $(output + 24), %r10
 
     # read the contents of the file specified by the path at $energy_full into %r14
     mov     $energy_full, %rdi
@@ -126,8 +125,7 @@ back_from_charge:
     mov     $1, %rax   # system call 1 is write
     mov     $1, %rdi   # file handle 1 is stdout
     mov     %r10, %rsi # address of string to output
-    mov     $output, %rdx
-    add     $27, %rdx
+    mov     $(output + 27), %rdx
     sub     %r10, %rdx
     syscall
 
