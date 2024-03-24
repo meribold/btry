@@ -85,10 +85,15 @@ _start:
     test    %rax, %rax
     js      charge
 
-    # copy the result of get_number (the energy_full value) and read the $energy_now file
+    # copy the result of get_number (the energy_full value) and read the energy_now file
     # (store the contents in %r14)
     mov     %r14d, %r15d
-    mov     $energy_now, %rdi
+
+    # change the path to "/sys/class/power_supply/BAT0/energy_now"
+    mov     $(energy_full + 36), %rdi
+    movl    $0x00776f6e, (%rdi) # "now\0"
+    sub     $36, %rdi
+
     call    get_number
 
     mov     $0x20685720, %r11 # " Wh "
@@ -135,16 +140,24 @@ back_from_charge:
     syscall            # invoke operating system to exit
 
 charge:
-    mov     $charge_full, %rdi
+    # change the path to "/sys/class/power_supply/BAT0/charge_full"
+    mov     $(energy_full + 29), %rdi
+    movl    $0x72616863, (%rdi) # "char"
+    add     $4, %rdi
+    movw    $0x6567, (%rdi) # "ge"
+    sub     $33, %rdi
+
     call    get_number
     mov     %r14d, %r15d
-    mov     $charge_now, %rdi
+
+    # change the path to "/sys/class/power_supply/BAT0/charge_now"
+    mov     $(energy_full + 36), %rdi
+    movl    $0x00776f6e, (%rdi) # "now\0"
+    sub     $36, %rdi
+
     call    get_number
     mov     $0x20684120, %r11 # " Ah "
     jmp     back_from_charge
 
 energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
-energy_now: .ascii "/sys/class/power_supply/BAT0/energy_now\0"
-charge_full: .ascii "/sys/class/power_supply/BAT0/charge_full\0"
-charge_now: .ascii "/sys/class/power_supply/BAT0/charge_now\0"
 output: .ascii "111.1 Wh / 111.1 Wh (100%)\n"
