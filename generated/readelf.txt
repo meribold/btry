@@ -23,6 +23,6 @@ Program Headers:
   Type           Offset             VirtAddr           PhysAddr
                  FileSiz            MemSiz              Flags  Align
   LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
-                 0x00000000000001e6 0x00000000000001e7  RWE    0x1000
+                 0x00000000000001e5 0x00000000000001e6  RWE    0x1000
 
 There is no dynamic section in this file.

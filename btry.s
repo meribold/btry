@@ -138,7 +138,7 @@ back_from_charge:
     syscall            # invoke operating system to exit
 
 charge:
-    mov     $0x20684120, %r12d # " Ah "
+    mov     $0x4120, %r12w # " A"
 
     # change the path to "/sys/class/power_supply/BAT0/charge_full"
     movl    $0x72616863, 29(%rdi) # "char"
