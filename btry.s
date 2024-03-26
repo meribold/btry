@@ -76,10 +76,13 @@ more_digits:
 
 _start:
     mov     $(output + 24), %r10
+    mov     $0x20685720, %r12d # " Wh "
 
     # read the contents of the file specified by the path at $energy_full into %r14
     mov     $energy_full, %rdi
+back_from_charge:
     call    get_number
+    mov     $energy_full, %rdi
 
     # sometimes there are no energy_* files but charge_* files instead
     test    %rax, %rax
@@ -90,15 +93,10 @@ _start:
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now"
-    mov     $(energy_full + 36), %rdi
-    movl    $0x00776f6e, (%rdi) # "now\0"
-    sub     $36, %rdi
+    movl    $0x00776f6e, 36(%rdi) # "now\0"
 
     call    get_number
 
-    mov     $0x20685720, %r11 # " Wh "
-
-back_from_charge:
     # calculate the remaining energy as a percentage
     xor     %rdx, %rdx
     mov     %r14, %rax
@@ -110,7 +108,7 @@ back_from_charge:
     dec     %r10
     movb    $'(, (%r10)
     sub     $4, %r10
-    movl    %r11d, (%r10)
+    movl    %r12d, (%r10)
 
     # prepend the energy_full (or charge_full) value to the output string
     mov     %r15d, %eax
@@ -120,7 +118,7 @@ back_from_charge:
     sub     $2, %r10
     movw    $0x202f, (%r10)
     sub     $4, %r10
-    movl    %r11d, (%r10)
+    movl    %r12d, (%r10)
 
     # prepend the energy_now (or charge_now) value to the output string
     mov     %r14d, %eax
@@ -135,28 +133,16 @@ back_from_charge:
     syscall
 
     # exit(0)
-    mov     $60, %rax  # system call 60 is exit
-    xor     %rdi, %rdi # we want return code 0
+    mov     $60, %al   # system call 60 is exit
+    xor     %dil, %dil # we want return code 0
     syscall            # invoke operating system to exit
 
 charge:
+    mov     $0x20684120, %r12d # " Ah "
+
     # change the path to "/sys/class/power_supply/BAT0/charge_full"
-    mov     $(energy_full + 29), %rdi
-    movl    $0x72616863, (%rdi) # "char"
-    add     $4, %rdi
-    movw    $0x6567, (%rdi) # "ge"
-    sub     $33, %rdi
-
-    call    get_number
-    mov     %r14d, %r15d
-
-    # change the path to "/sys/class/power_supply/BAT0/charge_now"
-    mov     $(energy_full + 36), %rdi
-    movl    $0x00776f6e, (%rdi) # "now\0"
-    sub     $36, %rdi
-
-    call    get_number
-    mov     $0x20684120, %r11 # " Ah "
+    movl    $0x72616863, 29(%rdi) # "char"
+    movb    $'e, 34(%rdi)
     jmp     back_from_charge
 
 energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
