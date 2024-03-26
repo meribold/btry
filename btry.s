@@ -89,10 +89,10 @@ back_from_charge:
     js      charge
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
-    # energy_now file (store the contents in %r14)
+    # energy_now or charge_now file (store the contents in %r14)
     mov     %r14d, %r15d
 
-    # change the path to "/sys/class/power_supply/BAT0/energy_now"
+    # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
     movl    $0x00776f6e, 36(%rdi) # "now\0"
 
     call    get_number
