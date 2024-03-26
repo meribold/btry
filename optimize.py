@@ -35,9 +35,14 @@ btry_bytes[0x18:0x20] = struct.pack("<Q", e_entry)
 # Update `e_phnum`.  Set it to 1.
 btry_bytes[0x38:0x3A] = struct.pack("<H", 1)
 
+# Delete the final byte, which is zero.  This byte isn't essential because we can instruct
+# the loader (or OS?) to allocate an extra byte on top of what's in the file and extra
+# memory (the difference between `p_filesz` and `p_memsz`) will be initialized to zero.
+del btry_bytes[-1]
+
 # Update `p_filesz` and `p_memsz` of the one remaining program header.
 btry_bytes[0x58:0x60] = struct.pack("<Q", len(btry_bytes))
-btry_bytes[0x60:0x68] = struct.pack("<Q", len(btry_bytes))
+btry_bytes[0x60:0x68] = struct.pack("<Q", len(btry_bytes) + 1)
 
 # Update some addresses.  This is really brittle and likely to break for all kinds of
 # reasons.  FIXME?!
