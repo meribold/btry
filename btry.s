@@ -66,8 +66,8 @@ add_eax_to_output_string:
     mov     $10, %r9d # 4-byte divisor
 more_digits:
     xor     %edx, %edx
-    div     %r9d      # quotient and remainder are stored in %eax and %edx, respectively
-    add     $'0, %dl  # convert the remainder to ASCII
+    div     %r9d     # quotient and remainder are stored in %eax and %edx, respectively
+    add     $'0, %dl # convert the remainder to ASCII
     dec     %r10
     mov     %dl, (%r10)
     cmp     $0, %eax
@@ -78,18 +78,18 @@ _start:
     mov     $(output + 24), %r10
     mov     $0x20685720, %r12d # " Wh "
 
-    # read the contents of the file specified by the path at $energy_full into %r14
-    mov     $energy_full, %rdi
+    # read the contents of the file specified by the path at $path into %r14
+    mov     $path, %rdi
 back_from_charge:
     call    get_number
-    mov     $energy_full, %rdi
+    mov     $path, %rdi
 
     # sometimes there are no energy_* files but charge_* files instead
     test    %rax, %rax
     js      charge
 
-    # copy the result of get_number (the energy_full value) and read the energy_now file
-    # (store the contents in %r14)
+    # copy the result of get_number (the energy_full or charge_full value) and read the
+    # energy_now file (store the contents in %r14)
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now"
@@ -145,5 +145,5 @@ charge:
     movb    $'e, 34(%rdi)
     jmp     back_from_charge
 
-energy_full: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
+path: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
 output: .ascii "111.1 Wh / 111.1 Wh (100%)\n"
