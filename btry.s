@@ -3,7 +3,8 @@
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $2, %rax   # system call 2 is open
+    xor     %rax, %rax
+    mov     $2, %al    # system call 2 is open
     xor     %rsi, %rsi # 0 means read-only
     syscall
 
@@ -14,8 +15,9 @@ get_number:
     mov     %rax, %rdi # open returns a file descriptor in %rax; read expects it in %rdi
     xor     %rax, %rax # system call 0 is read
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
-    mov     $9, %rdx       # read up to 9 bytes
-    syscall                # the number of bytes read go into %rax
+    xor     %rdx, %rdx
+    mov     $9, %dl    # read up to 9 bytes
+    syscall            # the number of bytes read go into %rax
 
     # convert file contents to an integer (stored in %r14)
     sub     $1, %rax # subtract 1 so we don't process the newline
@@ -105,9 +107,8 @@ back_from_charge:
     call    add_eax_to_output_string
 
     # prepend "(" and then " Wh " (or " Ah ") to the output string
-    dec     %r10
-    movb    $'(, (%r10)
-    sub     $4, %r10
+    movb    $'(, -1(%r10)
+    sub     $5, %r10
     movl    %r12d, (%r10)
 
     # prepend the energy_full (or charge_full) value to the output string
@@ -115,9 +116,8 @@ back_from_charge:
     call    add_eax_to_output_string_as_decimal
 
     # prepend "/ " and then " Wh " (or " Ah ") to the output string
-    sub     $2, %r10
-    movw    $0x202f, (%r10)
-    sub     $4, %r10
+    movw    $0x202f, -2(%r10)
+    sub     $6, %r10
     movl    %r12d, (%r10)
 
     # prepend the energy_now (or charge_now) value to the output string
@@ -125,8 +125,9 @@ back_from_charge:
     call    add_eax_to_output_string_as_decimal
 
     # write(1, %rsp, $output + 27 - %r10)
-    mov     $1, %rax   # system call 1 is write
-    mov     $1, %rdi   # file handle 1 is stdout
+    xor     %eax, %eax   # system call 1 is write
+    inc     %eax
+    mov     %eax, %edi # file handle 1 is stdout
     mov     %r10, %rsi # address of string to output
     mov     $(output + 27), %rdx
     sub     %r10, %rdx
