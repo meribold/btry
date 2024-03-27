@@ -33,6 +33,8 @@ Then make the program executable: `chmod +x btry`.
 *   Anything that's not x86-64 and Linux is definitely not supported.
 *   I don't know how standard/portable the `/sys/class/power_supply/BAT0` path used
     actually is.
+*   If neither an `energy_full` nor a `charge_full` file exists in
+    `/sys/class/power_supply/BAT0`, an infinite loop results.
 *   Some laptops (for example the ThinkPad T480) have two batteries; this isn't supported
     by `btry`.
 
