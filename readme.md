@@ -1,3 +1,6 @@
+A battery status program for x86-64 Linux laptops in the form of a 466-byte ELF
+executable.
+
 ## Usage
 
     $ btry
@@ -21,8 +24,17 @@ base64 -d <<EOF | unxz -Fraw --lzma2=dict=4K > btry
 pP8F9vzzu988KhqPckjE3ijWuBgpzsoTiuHy8hscYCjmR3Dj6JY34rMYfBTqx/R0xNidKjWtm2mdFbS6u2
 EBiQyywVp1incoC3VxC/T2Qo5iNSsEpPc30Li9mW374HzQJDJNZNrCtp4bkvJnNxjeU3BdYhiv7XwA
 EOF
-chmod +x btry
 ```
+
+Then make the program executable: `chmod +x btry`.
+
+## Limitations
+
+*   Anything that's not x86-64 and Linux is definitely not supported.
+*   I don't know how standard/portable the `/sys/class/power_supply/BAT0` path used
+    actually is.
+*   Some laptops (for example the ThinkPad T480) have two batteries; this isn't supported
+    by `btry`.
 
 ## Build instructions
 
@@ -36,6 +48,6 @@ No.
 
 ## Notes
 
-When my ThinkPad is plugged in at the time I wake it from suspend mode, I get the
+When my ThinkPad X220 is plugged in at the time I wake it from suspend mode, I get the
 `charge_now` file.  When it is not plugged in I get the `energy_now` file.  At least I
 think that's how it works.
