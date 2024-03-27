@@ -13,13 +13,13 @@ of watt hours.
 ## Installation
 
 ```
-base64 -d <<EOF | lzcat > btry
-XQAAgAD//////////wA/kUWEaD2JptqKzJPiTtkDivxsK2zofYLNvkRewC6B8YmKnA3ZcXVwKtydE1RoSynxKA
-sx++uJulwUW9QX/l57HmD8/H5Smrfwtr/NQHDQTUPRWmGvcKZ+qPlOhrFIHEb/AcmWWQpAYFlSGlFc1iNaN+lg
-BVhykIiTMQFNu1dgrAWWzl1Aa2jXO2GS/a4n8l8VTO2iEAy9JubqzizBthQmTnW0CJ3vtwxXCKNYlbR3TxinFg
-kyC8YA+IKvfABSTZKALc0pamJubMGiLaaIYgDUdftnvcp+8Fjv0eeTXSu63rIwvvMbtTxFL/2x0hRAjPQSLskx
-oo28YAMnusXVPEKjWx5erbVXoUXAKZ2wRow5PqNOI7dojbKKYcKiPmdBB0LZNCM99O+6ugKKSGRdE9x2ZsoqPb
-NUEw8KRCNKZ890ygyU3pRZAX5MhiAv6C2x3fx+NJplDCOYNl9CtPkH4RHG2qmqYWjA5LJ2D+Mjvatd3P/sPpUH
+base64 -d <<EOF | unxz -Fraw --lzma2=dict=4K > btry
+4AHRAWYAAD+R1tX9PhIqx7s6AgikVMEPsJf5Lf5g4xQNjMWNtO8HAveeDflMxgfGZN5pxN98AvJONoWtSD
+3r/2fD8+pTo1z0Wmg8ckBXn37pnLqK7VPWLb6BuravlyX2UUroOamQkHpZS1FigDpKLb5Edf65UkxNpkoi
+3iWRZwSsxUJ2HMKXYSgHwzeQFS4Zfij1QBNGWzg/UDubHHOVEamwVkYhsUN2am8QESfmLAf7Oi0zmMplZY
+6KYRLvkIb8gXo6+Ap0MRH4nDrbevK5bYvv5Vi4hwOHLxcqLdj+xDcfvl2IKPHCj+h9kzXdcGxZDxGKxty3
+pP8F9vzzu988KhqPckjE3ijWuBgpzsoTiuHy8hscYCjmR3Dj6JY34rMYfBTqx/R0xNidKjWtm2mdFbS6u2
+EBiQyywVp1incoC3VxC/T2Qo5iNSsEpPc30Li9mW374HzQJDJNZNrCtp4bkvJnNxjeU3BdYhiv7XwA
 EOF
 chmod +x btry
 ```
