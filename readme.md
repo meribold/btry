@@ -42,7 +42,7 @@ Then make the program executable: `chmod +x btry`.
 
 ### Linux on x86-64
 
-    $ make
+    make
 
 ### Other platforms
 
