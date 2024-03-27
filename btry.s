@@ -20,7 +20,7 @@ get_number:
     syscall            # the number of bytes read go into %rax
 
     # convert file contents to an integer (stored in %r14)
-    sub     $1, %rax # subtract 1 so we don't process the newline
+    dec     %al # subtract 1 so we don't process the newline
     xor     %r14, %r14
     xor     %rcx, %rcx
     xor     %rdx, %rdx
