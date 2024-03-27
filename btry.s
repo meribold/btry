@@ -136,7 +136,7 @@ back_from_charge:
     mov     %r14d, %eax
     call    add_eax_to_output_string_as_decimal
 
-    # write(1, %rsp, $400030 - %r10)
+    # write(1, %rsp, $0x400030 - %r10)
     xor     %eax, %eax   # system call 1 is write
     inc     %eax
     mov     %eax, %edi # file handle 1 is stdout
