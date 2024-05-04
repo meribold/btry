@@ -4,20 +4,20 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x400109, 0x38
+.quad 0x400102, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000, 0x400000, 0x1d2, 0x1d3, 0x1000
+.quad 0, 0x400000, 0x400000, 0x1ca, 0x1cb, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    xor     %rax, %rax
+    xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
-    xor     %rsi, %rsi # 0 means read-only
+    xor     %esi, %esi # 0 means read-only
     syscall
 
     test    %rax, %rax
@@ -25,17 +25,17 @@ get_number:
 
     # read(fd, buffer, 9)
     mov     %rax, %rdi # open returns a file descriptor in %rax; read expects it in %rdi
-    xor     %rax, %rax # system call 0 is read
+    xor     %eax, %eax # system call 0 is read
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
-    xor     %rdx, %rdx
+    xor     %edx, %edx
     mov     $9, %dl    # read up to 9 bytes
     syscall            # the number of bytes read go into %rax
 
     # convert file contents to an integer (stored in %r14)
     dec     %al # subtract 1 so we don't process the newline
-    xor     %r14, %r14
-    xor     %rcx, %rcx
-    xor     %rdx, %rdx
+    xor     %r14d, %r14d
+    xor     %ecx, %ecx
+    xor     %edx, %edx
 next_char:
     imul    $10, %r14
     mov     -9(%rsp, %rcx), %dl # load one character/byte/digit
@@ -84,7 +84,7 @@ more_digits:
     add     $'0, %dl # convert the remainder to ASCII
     dec     %r10
     mov     %dl, (%r10)
-    cmp     $0, %eax
+    test    %eax, %eax
     jne     more_digits
     ret
 
@@ -93,10 +93,10 @@ _start:
     mov     $0x20685720, %r12d # " Wh "
 
     # read the contents of the file specified by the path at $path into %r14
-    mov     $0x4001aa, %rdi
+    mov     $0x4001a2, %rdi
 back_from_charge:
     call    get_number
-    mov     $0x4001aa, %rdi
+    mov     $0x4001a2, %rdi
 
     # sometimes there are no energy_* files but charge_* files instead
     test    %rax, %rax
@@ -112,7 +112,7 @@ back_from_charge:
     call    get_number
 
     # calculate the remaining energy as a percentage
-    xor     %rdx, %rdx
+    xor     %edx, %edx
     mov     %r14, %rax
     imul    $100, %rax
     div     %r15
