@@ -16,7 +16,7 @@ of watt hours.
 ## Installation
 
 ```
-base64 -d <<EOF | unxz -Fraw --lzma2=dict=4K > btry
+base64 -d <<EOF | unxz -Fraw --lzma2=dict=4K > btry && chmod +x btry
 4AHJAWAAAD+R1tX9PhIqx7s6AgikVNieRinGww2EMS6e7tBgQB1qzJAkJcDqZNVT9rhKZ0cKZkytNeiU
 Un8N0PZsva9qktkytDnza5yzVz8a/cHyDhfdYJiKXctvwywjHlKsWj600KKpYQjm6AxEOIOO3hPPXZg3
 aEWyMvw0qeRewOdBnA+FFnzpUFUKckcU1pla3WF2jmMmgaM/EVCC0KvRTGjlqVLDoxU0eGOxR/Vtkk/z
@@ -25,8 +25,6 @@ x+5WsNoZki+VUKCUI+hCMM3GlwtuoPvrb43uejXwvuRNWGwYCW76WecYpjnxYtDmvqhGi668uEAxR1DR
 EPM+vTUnzzYF+H84gNs7d82/Cg6D6YU1unv7OTYtSffMY7jTXkD1/oQqq4ma1c6q3rAiELn9N+y3DQAA
 EOF
 ```
-
-Then make the program executable: `chmod +x btry`.
 
 ## Limitations
 
