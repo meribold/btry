@@ -4,13 +4,13 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x400114, 0x38
+.quad 0x400113, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000, 0x400000, 0x1c2, 0x1c3, 0x1000
+.quad 0, 0x400000, 0x400000, 0x1ba, 0x1bb, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
@@ -25,7 +25,7 @@ get_number:
     js      charge
 
     # read(fd, buffer, 9)
-    mov     %rax, %rdi # open returns a file descriptor in %rax; read expects it in %rdi
+    mov     %eax, %edi # open returns a file descriptor in %rax; read expects it in %rdi
     xor     %eax, %eax # system call 0 is read
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
     xor     %edx, %edx
@@ -96,13 +96,13 @@ more_digits:
     ret
 
 _start:
-    mov     $0x40002d, %r10
+    mov     $0x40002d, %r10d
     mov     $0x20685720, %r12d # " Wh "
 
     # read the contents of the file specified by the path at $path into %r14
-    mov     $0x40019a, %rdi
+    mov     $0x400192, %edi
     call    get_number
-    mov     $0x40019a, %rdi
+    mov     $0x400192, %edi
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
     # energy_now or charge_now file (store the contents in %r14)
@@ -115,7 +115,7 @@ _start:
 
     # calculate the remaining energy as a percentage
     xor     %edx, %edx
-    mov     %r14, %rax
+    mov     %r14d, %eax
     imul    $100, %rax
     div     %r15
     call    add_eax_to_output_string
@@ -138,13 +138,13 @@ _start:
     mov     %r14d, %eax
     call    add_eax_to_output_string_as_decimal
 
-    # write(1, %rsp, $0x400030 - %r10)
+    # write(1, %r10, $0x400030 - %r10)
     xor     %eax, %eax   # system call 1 is write
     inc     %eax
     mov     %eax, %edi # file handle 1 is stdout
-    mov     %r10, %rsi # address of string to output
-    mov     $0x400030, %rdx
-    sub     %r10, %rdx
+    mov     %r10d, %esi # address of string to output
+    mov     $0x400030, %edx
+    sub     %r10d, %edx
     syscall
 
     # exit(0)
