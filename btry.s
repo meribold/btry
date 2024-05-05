@@ -4,13 +4,13 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x400102, 0x38
+.quad 0x400106, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000, 0x400000, 0x1ca, 0x1cb, 0x1000
+.quad 0, 0x400000, 0x400000, 0x1c9, 0x1ca, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
@@ -20,8 +20,9 @@ get_number:
     xor     %esi, %esi # 0 means read-only
     syscall
 
+    # sometimes there are no energy_* files but charge_* files instead
     test    %rax, %rax
-    js      fail
+    js      charge
 
     # read(fd, buffer, 9)
     mov     %rax, %rdi # open returns a file descriptor in %rax; read expects it in %rdi
@@ -44,7 +45,6 @@ next_char:
     inc     %rcx
     cmp     %rcx, %rax
     jne     next_char
-fail:
     ret
 
 # prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
@@ -93,14 +93,9 @@ _start:
     mov     $0x20685720, %r12d # " Wh "
 
     # read the contents of the file specified by the path at $path into %r14
-    mov     $0x4001a2, %rdi
-back_from_charge:
+    mov     $0x4001a1, %rdi
     call    get_number
-    mov     $0x4001a2, %rdi
-
-    # sometimes there are no energy_* files but charge_* files instead
-    test    %rax, %rax
-    js      charge
+    mov     $0x4001a1, %rdi
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
     # energy_now or charge_now file (store the contents in %r14)
@@ -156,6 +151,6 @@ charge:
     # change the path to "/sys/class/power_supply/BAT0/charge_full"
     movl    $0x72616863, 29(%rdi) # "char"
     movb    $'e, 34(%rdi)
-    jmp     back_from_charge
+    jmp     get_number
 
 .ascii "/sys/class/power_supply/BAT0/energy_full"
