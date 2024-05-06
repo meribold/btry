@@ -4,17 +4,18 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x40010c, 0x38
+.quad 0x400111, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000, 0x400000, 0x1b3, 0x1b4, 0x1000
+.quad 0, 0x400000, 0x400000, 0x1b2, 0x1b3, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
+    mov     $0x40018a, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -98,16 +99,14 @@ _start:
     mov     $0x20685720, %r12d # " Wh "
 
     # read the contents of the file specified by the path at $path into %r14
-    mov     $0x40018b, %edi
     call    get_number
-    mov     $0x40018b, %edi
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
     # energy_now or charge_now file (store the contents in %r14)
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 36(%rdi) # "now\0"
+    movl    $0x00776f6e, 0x4001ae # "now\0"
 
     call    get_number
 
