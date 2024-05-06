@@ -4,13 +4,13 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x400113, 0x38
+.quad 0x40010c, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000, 0x400000, 0x1ba, 0x1bb, 0x1000
+.quad 0, 0x400000, 0x400000, 0x1b3, 0x1b4, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
@@ -21,7 +21,7 @@ get_number:
     syscall
 
     # sometimes there are no energy_* files but charge_* files instead
-    test    %rax, %rax
+    test    %eax, %eax
     js      charge
 
     # read(fd, buffer, 9)
@@ -79,8 +79,6 @@ add_eax_to_output_string_as_decimal:
     dec     %r10
     movb    $'., (%r10)
     mov     %r8d, %eax
-    call    add_eax_to_output_string
-    ret
 
 # prepend %eax to the output string; invalidates %eax, %edx, and %r9d
 add_eax_to_output_string:
@@ -100,9 +98,9 @@ _start:
     mov     $0x20685720, %r12d # " Wh "
 
     # read the contents of the file specified by the path at $path into %r14
-    mov     $0x400192, %edi
+    mov     $0x40018b, %edi
     call    get_number
-    mov     $0x400192, %edi
+    mov     $0x40018b, %edi
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
     # energy_now or charge_now file (store the contents in %r14)

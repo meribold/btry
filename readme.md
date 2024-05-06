@@ -1,4 +1,4 @@
-A battery status program for x86-64 Linux laptops in the form of a 442-byte ELF
+A battery status program for x86-64 Linux laptops in the form of a 435-byte ELF
 executable.
 
 ## Usage
@@ -17,12 +17,12 @@ of watt hours.
 
 ```
 base64 -d <<EOF | unxz -Fraw --lzma2=dict=4K > btry && chmod +x btry
-4AG5AVgAAD+R1tX9PhIqx7s6AgikVMIvuIkLWFsiS+t/qTGVCzqgdyaGYLHoEgq8xqDeV3KfMBGqoNF
-wcDczzYLm+7dDhYsqcCI1IQuOc/4TF1GPMI9ohUqm3APqjzMe5TwLu0d1ynen9NhhR5WsmETLjmJy0K
-uvf4k3Ev1zkt7cq0lggfFlMuS8kJZXN73Bnon54gqvM8wf2+jUCMNbBkuOFMYYuHUaNJKZb+xtHLywc
-8aqD06AvUz9fBvUmjkgBUZ575svaNR5NAgkgOCQd2lueZgw8oUpN7nmneOerDALNoXdjBpD2fyiyZ9a
-NzWiGRRWvQeEKuYr+h36O/R4OMw9mK9pNLjdMNG23DTGN+MWnkH3/LUrEyTX218Ftx/DONtpSQY1lY5
-yrI4O4BXXVH6cvB88H7fk2LkXJsAtTT02RXXmatfKQuvW9E0z39KQYBmLIkVSKeKy9e216uCUAA==
+4AGyAVIAAD+R1tX9PhIqx7s6AgikVMFnoef5Lf5g4xQNh34bUxl6NgnsxP/zEWqEHBHY40LpmKyVni
+b+Wqbhp4BmN7Mk7dzGGFLwAHmLNqsh5QUIf6N0+8/3WwDUk/D4RWJFlQPWN+m/eQ06QwARsMiCYh9s
+5hFQ9MkeYmAWuD/3OK/aMlbwUMbiB4YVmVn/sy8bYAyDtX3MqqpOa22KGevr67lkzf7WZa5vW74RNL
+HQnNl7QWc568h0t8X5q0ok4sTeAsnUK7jHbXTx8qQ/AiNblduAEiLEnLd8U81mm+/ZMe86QebXsu9x
+bM5bDoVwjeybdywJal2EmnqY2XyAkg6mVAOtM2MQx8C27K3U9FHYNownzf1cVg+FILq6y7Hcu1lqt+
+PVuU5RP6RFuFdiR7l667MLve737xBKcD0FuQbf7EeX7VzyD5/iNXGxA0QxwhVYUzovjAbwAA==
 EOF
 ```
 
