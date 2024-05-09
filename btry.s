@@ -10,7 +10,7 @@
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x10000, 0, 0x1a1, 0x200
+.quad 0, 0x10000, 0, 0x19b, 0x200
 
 # this is the entry point of the program
     mov     $0x1002d, %r10d
@@ -23,9 +23,6 @@
     # copy the result of get_number (the energy_full or charge_full value) and read the
     # energy_now or charge_now file (store the contents in %r14)
     mov     %r14d, %r15d
-
-    # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 0x1019b # "now\0"
 
     call    get_number
 
@@ -71,7 +68,7 @@
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x10177, %edi
+    mov     $0x10173, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -80,6 +77,9 @@ get_number:
     # sometimes there are no energy_* files but charge_* files instead
     test    %eax, %eax
     js      charge
+
+    # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
+    movl    $0x00776f6e, 36(%rdi) # "now\0"
 
     # read(fd, buffer, 9)
     xchg    %eax, %edi # open returns a file descriptor in %rax; read expects it in %rdi
