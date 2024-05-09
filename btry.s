@@ -4,7 +4,7 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x40010c, 0x38
+.quad 0x400103, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
@@ -16,12 +16,12 @@ end:
     mov     $60, %al   # system call 60 is exit
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
-.quad 0x1a7, 0x1a8, 0x1000
+.quad 0x1a4, 0x1a5, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x40017f, %edi
+    mov     $0x40017c, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -76,8 +76,7 @@ add_eax_to_output_string_as_decimal:
     div     %r9d          # div stores the quotient in %eax
 
     # convert %eax to text (just one character)
-    mov     $10, %r9b # 1-byte divisor
-    div     %r9b      # quotient and remainder are stored in %al and %ah, respectively
+    div     %r13b     # quotient and remainder are stored in %al and %ah, respectively
     add     $'0, %ah  # convert the remainder to ASCII
     dec     %r10
     mov     %ah, %al
@@ -87,22 +86,21 @@ add_eax_to_output_string_as_decimal:
     movb    $'., (%r10)
     xchg    %r8d, %eax
 
-# prepend %eax to the output string; invalidates %eax, %edx, and %r9d
+# prepend %eax to the output string; invalidates %eax and %edx
 add_eax_to_output_string:
-    mov     $10, %r9d # 4-byte divisor
-more_digits:
     xor     %edx, %edx
-    div     %r9d     # quotient and remainder are stored in %eax and %edx, respectively
+    div     %r13d    # quotient and remainder are stored in %eax and %edx, respectively
     add     $'0, %dl # convert the remainder to ASCII
     dec     %r10
     mov     %dl, (%r10)
     test    %eax, %eax
-    jne     more_digits
+    jne     add_eax_to_output_string
     ret
 
 # this is the entry point of the program
     mov     $0x40002d, %r10d
     mov     $0x20685720, %r12d # " Wh "
+    mov     $10, %r13d
 
     # read the contents of the file specified by the path at $path into %r14
     call    get_number
@@ -112,7 +110,7 @@ more_digits:
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 0x4001a3 # "now\0"
+    movl    $0x00776f6e, 0x4001a0 # "now\0"
 
     call    get_number
 
