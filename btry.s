@@ -10,12 +10,18 @@
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000, 0x400000, 0x1ab, 0x1ac, 0x1000
+.quad 0, 0x400000
+end:
+    syscall
+    mov     $60, %al   # system call 60 is exit
+    xor     %edi, %edi # we want return code 0
+    syscall            # invoke operating system to exit
+.quad 0x1a8, 0x1a9, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x400183, %edi
+    mov     $0x400180, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -106,7 +112,7 @@ _start:
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 0x4001a7 # "now\0"
+    movl    $0x00776f6e, 0x4001a4 # "now\0"
 
     call    get_number
 
@@ -142,11 +148,6 @@ _start:
     mov     %r10d, %esi # address of string to output
     mov     $0x400030, %edx
     sub     %r10d, %edx
-    syscall
-
-    # exit(0)
-    mov     $60, %al   # system call 60 is exit
-    xor     %edi, %edi # we want return code 0
-    syscall            # invoke operating system to exit
+    jmp     end
 
 .ascii "/sys/class/power_supply/BAT0/energy_full"
