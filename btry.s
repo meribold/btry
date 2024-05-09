@@ -87,7 +87,7 @@ get_number:
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
     xor     %edx, %edx
     mov     $9, %dl    # read up to 9 bytes
-    syscall            # the number of bytes read go into %rax
+    syscall            # the number of bytes read goes into %rax
 
     # convert file contents to an integer (stored in %r14)
     dec     %al # subtract 1 so we don't process the newline
@@ -126,8 +126,8 @@ add_eax_to_output_string_as_decimal:
     div     %r9d          # div stores the quotient in %eax
 
     # convert %eax to text (just one character)
-    div     %r13b     # quotient and remainder are stored in %al and %ah, respectively
-    add     $'0, %ah  # convert the remainder to ASCII
+    div     %r13b    # quotient and remainder are stored in %al and %ah, respectively
+    add     $'0, %ah # convert the remainder to ASCII
     dec     %r10
     mov     %ah, %al
     movb    %al, (%r10)
