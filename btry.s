@@ -16,7 +16,7 @@ end:
     mov     $60, %al   # system call 60 is exit
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
-.quad 0x1a4, 0x1a5, 0x1000
+.quad 0x1a4, 0x200, 0
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
