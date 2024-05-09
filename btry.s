@@ -100,7 +100,7 @@ more_digits:
     jne     more_digits
     ret
 
-_start:
+# this is the entry point of the program
     mov     $0x40002d, %r10d
     mov     $0x20685720, %r12d # " Wh "
 
@@ -142,9 +142,9 @@ _start:
     call    add_eax_to_output_string_as_decimal
 
     # write(1, %r10, $0x400030 - %r10)
-    xor     %eax, %eax   # system call 1 is write
+    xor     %eax, %eax  # system call 1 is write
     inc     %eax
-    mov     %eax, %edi # file handle 1 is stdout
+    mov     %eax, %edi  # file handle 1 is stdout
     mov     %r10d, %esi # address of string to output
     mov     $0x400030, %edx
     sub     %r10d, %edx
