@@ -4,7 +4,7 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x40010d, 0x38
+.quad 0x40010c, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
@@ -16,12 +16,12 @@ end:
     mov     $60, %al   # system call 60 is exit
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
-.quad 0x1a8, 0x1a9, 0x1000
+.quad 0x1a7, 0x1a8, 0x1000
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x400180, %edi
+    mov     $0x40017f, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -33,7 +33,7 @@ get_number:
 
     # read(fd, buffer, 9)
     xchg    %eax, %edi # open returns a file descriptor in %rax; read expects it in %rdi
-    xor     %eax, %eax # system call 0 is read
+    xchg    %esi, %eax # system call 0 is read
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
     xor     %edx, %edx
     mov     $9, %dl    # read up to 9 bytes
@@ -112,7 +112,7 @@ _start:
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 0x4001a4 # "now\0"
+    movl    $0x00776f6e, 0x4001a3 # "now\0"
 
     call    get_number
 
