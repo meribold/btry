@@ -4,13 +4,13 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x400103, 0x38
+.quad 0x10103, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x400000
+.quad 0, 0x10000
 end:
     syscall
     mov     $60, %al   # system call 60 is exit
@@ -21,7 +21,7 @@ end:
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x40017c, %edi
+    mov     $0x1017c, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -98,7 +98,7 @@ add_eax_to_output_string:
     ret
 
 # this is the entry point of the program
-    mov     $0x40002d, %r10d
+    mov     $0x1002d, %r10d
     mov     $0x20685720, %r12d # " Wh "
     mov     $10, %r13d
 
@@ -110,7 +110,7 @@ add_eax_to_output_string:
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 0x4001a0 # "now\0"
+    movl    $0x00776f6e, 0x101a0 # "now\0"
 
     call    get_number
 
@@ -139,12 +139,12 @@ add_eax_to_output_string:
     xchg    %r14d, %eax
     call    add_eax_to_output_string_as_decimal
 
-    # write(1, %r10, $0x400030 - %r10)
+    # write(1, %r10, $0x10030 - %r10)
     xor     %eax, %eax  # system call 1 is write
     inc     %eax
     mov     %eax, %edi  # file handle 1 is stdout
     mov     %r10d, %esi # address of string to output
-    mov     $0x400030, %edx
+    mov     $0x10030, %edx
     sub     %r10d, %edx
     jmp     end
 
