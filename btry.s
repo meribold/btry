@@ -4,18 +4,13 @@
 .zero 7
 .short 2, 0x3e
 .long 1
-.quad 0x10070, 0x38
+.quad 0x10068, 0x38
 .ascii "\0\0\0\0\0%)\n"
 .long 0
 .short 0x40, 0x38
 
 .long 1, 7
 .quad 0, 0x10000, 0, 0x1a1, 0x200
-end:
-    syscall
-    mov     $60, %al   # system call 60 is exit
-    xor     %edi, %edi # we want return code 0
-    syscall            # invoke operating system to exit
 
 # this is the entry point of the program
     mov     $0x1002d, %r10d
@@ -30,7 +25,7 @@ end:
     mov     %r14d, %r15d
 
     # change the path to "/sys/class/power_supply/BAT0/energy_now" (or "charge_now")
-    movl    $0x00776f6e, 0x1019d # "now\0"
+    movl    $0x00776f6e, 0x1019b # "now\0"
 
     call    get_number
 
@@ -66,12 +61,17 @@ end:
     mov     %r10d, %esi # address of string to output
     mov     $0x10030, %edx
     sub     %r10d, %edx
-    jmp     end
+    syscall
+
+    # exit(0)
+    mov     $60, %al   # system call 60 is exit
+    xor     %edi, %edi # we want return code 0
+    syscall            # invoke operating system to exit
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x10179, %edi
+    mov     $0x10177, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
