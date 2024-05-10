@@ -1,22 +1,25 @@
 .byte 0x7f
 .ascii "ELF"
-.byte 2, 1, 1, 0, 0
-.zero 7
+.byte 2, 1, 1, 0
+    mov     $0x10031, %r10d
+    jmp     plus28
 .short 2, 0x3e
 .long 1
-.quad 0x10068, 0x38
-.ascii "\0\0\0\0\0%)\n"
-.long 0
+.quad 0x10008, 0x38
+plus28:
+    mov     $10, %r13d
+    jmp     plus50
+.ascii "\0%)\n"
 .short 0x40, 0x38
 
 .long 1, 7
-.quad 0, 0x10000, 0, 0x19b, 0x200
-
-# this is the entry point of the program
-    mov     $0x1002d, %r10d
+.quad 0, 0x10000
+plus50:
     mov     $0x20685720, %r12d # " Wh "
-    mov     $10, %r13d
+    jmp     plus68
+.quad 0x189, 0x200
 
+plus68:
     # read the contents of the file specified by the path at $path into %r14
     call    get_number
 
@@ -56,7 +59,7 @@
     inc     %eax
     mov     %eax, %edi  # file handle 1 is stdout
     mov     %r10d, %esi # address of string to output
-    mov     $0x10030, %edx
+    mov     $0x10034, %edx
     sub     %r10d, %edx
     syscall
 
@@ -68,7 +71,7 @@
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x10173, %edi
+    mov     $0x10161, %edi
     xor     %eax, %eax
     mov     $2, %al    # system call 2 is open
     xor     %esi, %esi # 0 means read-only
