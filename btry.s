@@ -17,7 +17,7 @@ plus28:
 plus50:
     mov     $0x20685720, %r12d # " Wh "
     jmp     plus68
-.quad 0x189, 0x200
+.quad 0x186, 0x200
 
 plus68:
     # read the contents of the file specified by the path at $path into %r14
@@ -55,8 +55,8 @@ plus68:
     call    add_eax_to_output_string_as_decimal
 
     # write(1, %r10, $0x10030 - %r10)
-    xor     %eax, %eax  # system call 1 is write
-    inc     %eax
+    push    $1          # system call 1 is write
+    pop     %rax
     mov     %eax, %edi  # file handle 1 is stdout
     mov     %r10d, %esi # address of string to output
     mov     $0x10034, %edx
@@ -71,9 +71,9 @@ plus68:
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x10161, %edi
-    xor     %eax, %eax
-    mov     $2, %al    # system call 2 is open
+    mov     $0x1015e, %edi
+    push    $2
+    pop     %rax       # system call 2 is open
     xor     %esi, %esi # 0 means read-only
     syscall
 
@@ -88,8 +88,8 @@ get_number:
     xchg    %eax, %edi # open returns a file descriptor in %rax; read expects it in %rdi
     xchg    %esi, %eax # system call 0 is read
     lea     -9(%rsp), %rsi # save file contents read from fd on the stack
-    xor     %edx, %edx
-    mov     $9, %dl    # read up to 9 bytes
+    push    $9
+    pop     %rdx       # read up to 9 bytes
     syscall            # the number of bytes read goes into %rax
 
     # convert file contents to an integer (stored in %r14)
