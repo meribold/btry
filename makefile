@@ -1,13 +1,9 @@
-.PHONY: run
-run: btry
-	./btry
-
-btry.o: btry.s
-	as -mx86-used-note=no $< -o $@
-
 btry: btry.o
 	objcopy -O binary $< $@
 	chmod +x $@
+
+btry.o: btry.s
+	as -mx86-used-note=no $< -o $@
 
 .PHONY: clean
 clean:
