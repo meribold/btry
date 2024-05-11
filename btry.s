@@ -1,23 +1,26 @@
 .byte 0x7f
 .ascii "ELF"
 .byte 2, 1, 1, 0
-    mov     $0x10031, %r10d
+    mov     $0x10033, %r10d
     jmp     plus28
 .short 2, 0x3e
 .long 1
 .quad 0x10008, 0x38
 plus28:
-    mov     $10, %r13d
-    jmp     plus50
-.ascii "\0%)\n"
-.short 0x40, 0x38
+    mov     $10, %r13b
+    mov     $0x20685720, %r12d # " Wh "
+    jmp     plus68
+.ascii "%)\n"
+.short 0x38
 
 .long 1, 7
 .quad 0, 0x10000
 plus50:
-    mov     $0x20685720, %r12d # " Wh "
-    jmp     plus68
-.quad 0x186, 0x200
+    syscall
+    mov     $60, %al   # system call 60 is exit
+    xor     %edi, %edi # we want return code 0
+    syscall            # invoke operating system to exit
+.quad 0x180, 0x200
 
 plus68:
     # read the contents of the file specified by the path at $path into %r14
@@ -54,24 +57,19 @@ plus68:
     xchg    %r14d, %eax
     call    add_eax_to_output_string_as_decimal
 
-    # write(1, %r10, $0x10030 - %r10)
+    # write(1, %r10, $0x10036 - %r10)
     push    $1          # system call 1 is write
     pop     %rax
     mov     %eax, %edi  # file handle 1 is stdout
     mov     %r10d, %esi # address of string to output
-    mov     $0x10034, %edx
+    mov     $0x10036, %edx
     sub     %r10d, %edx
-    syscall
-
-    # exit(0)
-    mov     $60, %al   # system call 60 is exit
-    xor     %edi, %edi # we want return code 0
-    syscall            # invoke operating system to exit
+    jmp     plus50
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x1015e, %edi
+    mov     $0x10158, %edi
     push    $2
     pop     %rax       # system call 2 is open
     xor     %esi, %esi # 0 means read-only
