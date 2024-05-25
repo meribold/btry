@@ -32,8 +32,7 @@ EOF
     actually is.
 *   If neither an `energy_full` nor a `charge_full` file exists in
     `/sys/class/power_supply/BAT0`, an infinite loop results.
-*   Some laptops (for example the ThinkPad T480) have two batteries; this isn't supported
-    by `btry`.
+*   Extra batteries (like in the ThinkPad T480) are ignored.
 
 ## Build instructions
 
