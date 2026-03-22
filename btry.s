@@ -1,7 +1,10 @@
+p_vaddr = 0x10000
+
+start:
 .byte 0x7f
 .ascii "ELF"
 .byte 2, 1, 1, 0
-    mov     $0x10033, %r10d
+    mov     $(p_vaddr + percent_suffix - start), %r10d
     jmp     plus28
 .short 2, 0x3e
 .long 1
@@ -10,17 +13,17 @@ plus28:
     mov     $10, %r13b
     mov     $0x20685720, %r12d # " Wh "
     jmp     plus68
-.ascii "%)\n"
+percent_suffix: .ascii "%)\n"
 .short 0x38
 
 .long 1, 7
-.quad 0, 0x10000
+.quad 0, p_vaddr
 plus50:
     syscall
     mov     $60, %al   # system call 60 is exit
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
-.quad 0x180, 0x200
+.quad end - start, 0x200
 
 plus68:
     # read the contents of the file specified by the path at $path into %r14
@@ -69,7 +72,7 @@ plus68:
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $0x10158, %edi
+    mov     $(p_vaddr + path - start), %edi
     push    $2
     pop     %rax       # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -148,4 +151,5 @@ add_eax_to_output_string:
     jne     add_eax_to_output_string
     ret
 
-.ascii "/sys/class/power_supply/BAT0/energy_full"
+path: .ascii "/sys/class/power_supply/BAT0/energy_full"
+end:
