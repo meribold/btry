@@ -36,8 +36,8 @@ plus68:
     call    get_number
 
     # calculate the remaining energy as a percentage
-    xor     %edx, %edx
     mov     %r14d, %eax
+    cdq
     imul    $100, %rax
     div     %r15
     call    add_eax_to_output_string
@@ -114,14 +114,14 @@ charge:
 # prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
 # %edx, and %r9d
 add_eax_to_output_string_as_decimal:
-    xor     %edx, %edx
+    cdq
     mov     $1000000, %r9d # 4-byte divisor
     div     %r9d           # div stores the quotient in %eax
     push    %rax           # save the quotient
 
     # compute one decimal place
     imul    $10, %edx, %eax # make the remainder multiplied by 10 the new dividend
-    xor     %edx, %edx
+    cdq
     div     %r9d # divide by one million again
 
     add     $'0, %al # convert the quotient to ASCII
@@ -134,7 +134,7 @@ add_eax_to_output_string_as_decimal:
 
 # prepend %eax to the output string; invalidates %eax and %edx
 add_eax_to_output_string:
-    xor     %edx, %edx
+    cdq
     div     %r13d    # quotient and remainder are stored in %eax and %edx, respectively
     add     $'0, %dl # convert the remainder to ASCII
     dec     %r10
