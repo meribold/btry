@@ -4,15 +4,17 @@ start:
 .byte 0x7f
 .ascii "ELF"
 .byte 2, 1, 1, 0
-    mov     $(p_vaddr + percent_suffix - start), %r10d
+    mov     $(p_vaddr + percent_suffix - start), %ebx
     jmp     plus28
+.byte 0
 .short 2, 0x3e
 .long 1
 .quad 0x10008, 0x38
 plus28:
     mov     $10, %r13b
-    mov     $0x20685720, %r12d # " Wh "
+    mov     $0x20685720, %ebp # " Wh "
     jmp     plus68
+.byte 0
 percent_suffix: .ascii "%)\n"
 .short 0x38
 
@@ -45,30 +47,30 @@ plus68:
     call    add_eax_to_output_string
 
     # prepend "(" and then " Wh " (or " Ah ") to the output string
-    movb    $'(, -1(%r10)
-    sub     $5, %r10
-    movl    %r12d, (%r10)
+    movb    $'(, -1(%rbx)
+    sub     $5, %ebx
+    movl    %ebp, (%rbx)
 
     # prepend the energy_full (or charge_full) value to the output string
     xchg    %ecx, %eax
     call    add_eax_to_output_string_as_decimal
 
     # prepend "/ " and then " Wh " (or " Ah ") to the output string
-    movw    $0x202f, -2(%r10)
-    sub     $6, %r10
-    movl    %r12d, (%r10)
+    movw    $0x202f, -2(%rbx)
+    sub     $6, %ebx
+    movl    %ebp, (%rbx)
 
     # prepend the energy_now (or charge_now) value to the output string
     pop     %rax
     call    add_eax_to_output_string_as_decimal
 
-    # write(1, %r10, $0x10036 - %r10)
-    push    $1          # system call 1 is write
+    # write(1, %rbx, $0x10036 - %rbx)
+    push    $1         # system call 1 is write
     pop     %rax
-    mov     %eax, %edi  # file handle 1 is stdout
-    mov     %r10d, %esi # address of string to output
+    mov     %eax, %edi # file handle 1 is stdout
+    mov     %ebx, %esi # address of string to output
     mov     $0x10036, %edx
-    sub     %r10d, %edx
+    sub     %ebx, %edx
     jmp     plus50
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
@@ -106,7 +108,7 @@ next_char:
     loop    next_char  # loop until %rcx is zero
     ret
 charge:
-    mov     $0x4120, %r12w # " A"
+    mov     $0x4120, %bp # " A"
 
     # change the path to "/sys/class/power_supply/BAT0/charge_full"
     movl    $0x72616863, 29(%rdi) # "char"
@@ -127,11 +129,11 @@ add_eax_to_output_string_as_decimal:
     div     %r9d # divide by one million again
 
     add     $'0, %al # convert the quotient to ASCII
-    dec     %r10
-    movb    %al, (%r10)
+    dec     %ebx
+    movb    %al, (%rbx)
 
-    dec     %r10
-    movb    $'., (%r10)
+    dec     %ebx
+    movb    $'., (%rbx)
     pop     %rax
 
 # prepend %eax to the output string; invalidates %eax and %edx
@@ -139,8 +141,8 @@ add_eax_to_output_string:
     cdq
     div     %r13d    # quotient and remainder are stored in %eax and %edx, respectively
     add     $'0, %dl # convert the remainder to ASCII
-    dec     %r10
-    mov     %dl, (%r10)
+    dec     %ebx
+    mov     %dl, (%rbx)
     test    %eax, %eax
     jne     add_eax_to_output_string
     ret
