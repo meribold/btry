@@ -31,15 +31,17 @@ plus68:
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
     # energy_now or charge_now file (store the contents in %r14)
-    mov     %r14d, %r15d
+    push    %r14
 
     call    get_number
+    pop     %rcx
+    xchg    %r14d, %eax
+    push    %rax
 
     # calculate the remaining energy as a percentage
-    mov     %r14d, %eax
     cdq
     imul    $100, %rax
-    div     %r15
+    div     %rcx
     call    add_eax_to_output_string
 
     # prepend "(" and then " Wh " (or " Ah ") to the output string
@@ -48,7 +50,7 @@ plus68:
     movl    %r12d, (%r10)
 
     # prepend the energy_full (or charge_full) value to the output string
-    xchg    %r15d, %eax
+    xchg    %ecx, %eax
     call    add_eax_to_output_string_as_decimal
 
     # prepend "/ " and then " Wh " (or " Ah ") to the output string
@@ -57,7 +59,7 @@ plus68:
     movl    %r12d, (%r10)
 
     # prepend the energy_now (or charge_now) value to the output string
-    xchg    %r14d, %eax
+    pop     %rax
     call    add_eax_to_output_string_as_decimal
 
     # write(1, %r10, $0x10036 - %r10)
