@@ -116,17 +116,17 @@ charge:
     jmp     get_number
 
 # prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
-# %edx, and %r9d
+# %edx, and %esi
 add_eax_to_output_string_as_decimal:
     cdq
-    mov     $1000000, %r9d # 4-byte divisor
-    div     %r9d           # div stores the quotient in %eax
+    mov     $1000000, %esi # 4-byte divisor
+    div     %esi           # div stores the quotient in %eax
     push    %rax           # save the quotient
 
     # compute one decimal place
     imul    $10, %edx, %eax # make the remainder multiplied by 10 the new dividend
     cdq
-    div     %r9d # divide by one million again
+    div     %esi # divide by one million again
 
     add     $'0, %al # convert the quotient to ASCII
     dec     %ebx
