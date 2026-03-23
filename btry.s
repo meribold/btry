@@ -112,12 +112,12 @@ charge:
     jmp     get_number
 
 # prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
-# %edx, %r8d, and %r9d
+# %edx, and %r9d
 add_eax_to_output_string_as_decimal:
     xor     %edx, %edx
     mov     $1000000, %r9d # 4-byte divisor
     div     %r9d           # div stores the quotient in %eax
-    xchg    %eax, %r8d     # copy the quotient to %r8d
+    push    %rax           # save the quotient
 
     # compute one decimal place
     xchg    %edx, %eax    # the remainder is the new dividend
@@ -134,7 +134,7 @@ add_eax_to_output_string_as_decimal:
 
     dec     %r10
     movb    $'., (%r10)
-    xchg    %r8d, %eax
+    pop     %rax
 
 # prepend %eax to the output string; invalidates %eax and %edx
 add_eax_to_output_string:
