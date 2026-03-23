@@ -69,8 +69,8 @@ plus68:
     pop     %rax
     mov     %eax, %edi # file handle 1 is stdout
     mov     %ebx, %esi # address of string to output
-    mov     $0x10036, %edx
-    sub     %ebx, %edx
+    mov     $0x36, %dl
+    sub     %bl, %dl
     jmp     plus50
 
 # read the file specified via %rdi; convert the contents to an integer stored in %r14
