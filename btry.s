@@ -94,18 +94,14 @@ get_number:
     syscall            # the number of bytes read goes into %rax
 
     # convert file contents to an integer (stored in %r14)
-    dec     %al # subtract 1 so we don't process the newline
+    lea     -1(%rax), %ecx # subtract 1 so we don't process the newline
     xor     %r14d, %r14d
-    xor     %ecx, %ecx
-    xor     %edx, %edx
 next_char:
     imul    $10, %r14
-    mov     -9(%rsp, %rcx), %dl # load one character/byte/digit
-    sub     $'0, %dl            # convert the character from ASCII
-    add     %rdx, %r14          # add this digit
-    inc     %rcx
-    cmp     %rcx, %rax
-    jne     next_char
+    lodsb              # load one character/byte/digit into %al and increment %rsi
+    sub     $'0, %al   # convert the character from ASCII
+    add     %rax, %r14 # add this digit
+    loop    next_char  # loop until %rcx is zero
     ret
 charge:
     mov     $0x4120, %r12w # " A"
