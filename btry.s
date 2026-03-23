@@ -65,8 +65,7 @@ plus68:
     call    add_eax_to_output_string_as_decimal
 
     # write(1, %rbx, $0x10036 - %rbx)
-    push    $1         # system call 1 is write
-    pop     %rax
+    mov     $1, %al    # system call 1 is write (we know that %eax is zero here)
     mov     %eax, %edi # file handle 1 is stdout
     mov     %ebx, %esi # address of string to output
     mov     $0x36, %dl
