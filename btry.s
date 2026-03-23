@@ -120,16 +120,12 @@ add_eax_to_output_string_as_decimal:
     push    %rax           # save the quotient
 
     # compute one decimal place
-    xchg    %edx, %eax    # the remainder is the new dividend
+    imul    $10, %edx, %eax # make the remainder multiplied by 10 the new dividend
     xor     %edx, %edx
-    mov     $100000, %r9d # 4-byte divisor
-    div     %r9d          # div stores the quotient in %eax
+    div     %r9d # divide by one million again
 
-    # convert %eax to text (just one character)
-    div     %r13b    # quotient and remainder are stored in %al and %ah, respectively
-    add     $'0, %ah # convert the remainder to ASCII
+    add     $'0, %al # convert the quotient to ASCII
     dec     %r10
-    mov     %ah, %al
     movb    %al, (%r10)
 
     dec     %r10
