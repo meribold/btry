@@ -97,14 +97,14 @@ get_number:
 
     # convert file contents to an integer (stored in %eax)
     lea     -1(%rax), %ecx # subtract 1 so we don't process the newline
-    xor     %r14d, %r14d
+    xor     %edi, %edi
 next_char:
-    imul    $10, %r14
+    imul    $10, %edi
     lodsb              # load one character/byte/digit into %al and increment %rsi
     sub     $'0, %al   # convert the character from ASCII
-    add     %rax, %r14 # add this digit
+    add     %eax, %edi # add this digit
     loop    next_char  # loop until %rcx is zero
-    xchg    %r14d, %eax
+    xchg    %edi, %eax
     ret
 charge:
     mov     $0x4120, %bp # " A"
