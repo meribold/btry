@@ -117,23 +117,20 @@ charge:
 # prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
 # %edx, and %esi
 add_eax_to_output_string_as_decimal:
-    cdq
-    mov     $1000000, %esi # 4-byte divisor
-    div     %esi           # div stores the quotient in %eax
-    push    %rax           # save the quotient
+    # divide by one million in two steps
+    cdq                   # clear %edx since the dividend is %edx:%eax
+    mov     $100000, %esi # one hundred thousand
+    div     %esi          # %eax / 100000 (4-byte divisor)
+    cdq                   # clear %edx again for a second division
+    div     %r13d         # %eax / 10 (4-byte divisor)
 
-    # compute one decimal place
-    imul    $10, %edx, %eax # make the remainder multiplied by 10 the new dividend
-    cdq
-    div     %esi # divide by one million again
-
-    add     $'0, %al # convert the quotient to ASCII
+    # we have Wh (or Ah) in %eax (quotient) and the tenths digit in %edx (remainder)
+    add     $'0, %dl # convert the tenths digit to ASCII
     dec     %ebx
-    movb    %al, (%rbx)
+    movb    %dl, (%rbx)
 
     dec     %ebx
     movb    $'., (%rbx)
-    pop     %rax
 
 # prepend %eax to the output string; invalidates %eax and %edx
 add_eax_to_output_string:
