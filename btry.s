@@ -28,16 +28,15 @@ plus50:
 .quad end - start, 0x200
 
 plus68:
-    # read the contents of the file specified by the path at $path into %r14
+    # read the contents of the file specified by the path at $path into %eax
     call    get_number
 
     # copy the result of get_number (the energy_full or charge_full value) and read the
-    # energy_now or charge_now file (store the contents in %r14)
-    push    %r14
+    # energy_now or charge_now file (store the contents in %eax)
+    push    %rax
 
     call    get_number
     pop     %rcx
-    xchg    %r14d, %eax
     push    %rax
 
     # calculate the remaining energy as a percentage
@@ -72,7 +71,7 @@ plus68:
     sub     %bl, %dl
     jmp     plus50
 
-# read the file specified via %rdi; convert the contents to an integer stored in %r14
+# read the file specified via %rdi; convert the contents to an integer stored in %eax
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
     mov     $(p_vaddr + path - start), %edi
@@ -96,7 +95,7 @@ get_number:
     pop     %rdx       # read up to 9 bytes
     syscall            # the number of bytes read goes into %rax
 
-    # convert file contents to an integer (stored in %r14)
+    # convert file contents to an integer (stored in %eax)
     lea     -1(%rax), %ecx # subtract 1 so we don't process the newline
     xor     %r14d, %r14d
 next_char:
@@ -105,6 +104,7 @@ next_char:
     sub     $'0, %al   # convert the character from ASCII
     add     %rax, %r14 # add this digit
     loop    next_char  # loop until %rcx is zero
+    xchg    %r14d, %eax
     ret
 charge:
     mov     $0x4120, %bp # " A"
