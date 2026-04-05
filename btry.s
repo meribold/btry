@@ -125,12 +125,9 @@ add_eax_to_output_string_as_decimal:
     div     %r13d         # %eax / 10 (4-byte divisor)
 
     # we have Wh (or Ah) in %eax (quotient) and the tenths digit in %edx (remainder)
-    add     $'0, %dl # convert the tenths digit to ASCII
-    dec     %ebx
-    movb    %dl, (%rbx)
-
-    dec     %ebx
-    movb    $'., (%rbx)
+    sub     $2, %ebx
+    movw    $0x302e, (%rbx) # ".0"
+    add     %dl, 1(%rbx)    # add the tenths digit (%dl) to 0x30 ($'0)
 
 # prepend %eax to the output string; invalidates %eax and %edx
 add_eax_to_output_string:
