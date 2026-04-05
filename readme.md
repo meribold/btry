@@ -16,13 +16,11 @@ of watt hours.
 ## Installation
 
 ```
-base64 -d <<EOF | unxz -Fraw --lzma2=dict=4K > btry && chmod +x btry
-4AEuAQYAAD+R1tX9PhIqqLiC7tM26Rkl412GOAZaMsLDphi6dTMOPSJIV5ULj1tzydl2866w
-Ay0MWe/kTaGxK4iHkiHEsJVntYzfmFVw8L8KtfIcHTqJBQWPqCnkfmNH0hTONNw05tVBFN2b
-frzoOwGBWHrZ7xVDIBcUARu104CoNh4HeqZeGi1dasKnl3ODFtiBr3Cr1BXcjNuo2QD6m6HJ
-SIfaNyAFnJrOwlLWZAfkepMpaEeQF5PYEVol2/Fg//3dxKWxn64aPfGLZptIxrjWXttpHjhz
-EhEOREcoJcNAy1S2SLW7DiUmTcabwMsPw+xWcUau4IBBng8wNBeo0fMRhkIaP2ikdfHbF2wA
-EOF
+base64 -d <<< '4AEuAQYAAD+R1tX9PhIqqLiC7tM26Rkl412GOAZaMsLDphi6dTMOPSJIV5ULj1tzydl2866
+wAy0MWe/kTaGxK4iHkiHEsJVntYzfmFVw8L8KtfIcHTqJBQWPqCnkfmNH0hTONNw05tVBFN2bfrzoOwGBWHrZ7
+xVDIBcUARu104CoNh4HeqZeGi1dasKnl3ODFtiBr3Cr1BXcjNuo2QD6m6HJSIfaNyAFnJrOwlLWZAfkepMpaEe
+QF5PYEVol2/Fg//3dxKWxn64aPfGLZptIxrjWXttpHjhzEhEOREcoJcNAy1S2SLW7DiUmTcabwMsPw+xWcUau4
+IBBng8wNBeo0fMRhkIaP2ikdfHbF2wA' | unxz -Fraw --lzma2=dict=4K > btry && chmod +x btry
 ```
 
 ## Limitations
