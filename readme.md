@@ -27,12 +27,12 @@ EOF
 
 ## Limitations
 
-*   Anything that's not x86-64 and Linux is definitely not supported.
-*   I don't know how standard/portable the `/sys/class/power_supply/BAT0` path used
-    actually is.
-*   If neither an `energy_full` nor a `charge_full` file exists in
-    `/sys/class/power_supply/BAT0`, an infinite loop results.
-*   Extra batteries (like in the ThinkPad T480) are ignored.
+* Anything that's not x86-64 and Linux is definitely not supported.
+* I don't know how standard/portable the `/sys/class/power_supply/BAT0` path used actually
+  is.
+* If neither an `energy_full` nor a `charge_full` file exists in
+  `/sys/class/power_supply/BAT0`, an infinite loop results.
+* Extra batteries (like in the ThinkPad T480) are ignored.
 
 ## Build instructions
 
