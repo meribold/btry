@@ -1,3 +1,6 @@
+e_entry = 0x10008
+e_phoff = 0x38
+e_phentsize = 0x38
 p_vaddr = 0x10000
 
 start:
@@ -9,26 +12,20 @@ start:
 .byte 0
 .short 2, 0x3e
 .long 1
-.quad 0x10008, 0x38
+.quad e_entry, e_phoff
 plus28:
     push    $9
     pop     %rdx
     mov     $0x20685720, %ebp # " Wh "
-    jmp     plus68
+    jmp     plus50
 .byte 0
 percent_suffix: .ascii "%)\n"
-.short 0x38
+.short e_phentsize
 
+# program header starting at e_phoff (0x38)
 .long 1, 7
 .quad 0, p_vaddr
 plus50:
-    syscall
-    mov     $60, %al   # system call 60 is exit
-    xor     %edi, %edi # we want return code 0
-    syscall            # invoke operating system to exit
-.quad end - start, 0x200
-
-plus68:
     # read the contents of the file specified by the path at $path into %eax
     call    get_number
 
@@ -37,17 +34,17 @@ plus68:
     push    %rax
 
     call    get_number
+    mov     $1, %edi
     pop     %rsi
     push    %rax
+    cdq
+    # from now on, %rcx/%ecx is only used for dividing by 10
+    mov     $10, %ecx
 
     # calculate the remaining energy as a percentage
-    cdq
     mov     $100, %dl
     mul     %edx
     div     %esi
-
-    # from now on, %rcx/%ecx is only used for dividing by 10
-    mov     $10, %cl
 
     call    add_eax_to_output_string
 
@@ -71,11 +68,14 @@ plus68:
 
     # write(1, %rbx, $0x10036 - %rbx)
     mov     $1, %al    # system call 1 is write (we know that %eax is zero here)
-    mov     %eax, %edi # file handle 1 is stdout
+    # (%edi, which specifies the file handle, is already set to 1, which is stdout)
     mov     %ebx, %esi # address of string to output
     mov     $0x36, %dl
     sub     %bl, %dl
-    jmp     plus50
+    syscall
+    mov     $60, %al   # system call 60 is exit
+    xor     %edi, %edi # we want return code 0
+    syscall            # invoke operating system to exit
 
 # read the file specified via %rdi; convert the contents to an integer stored in %eax
 get_number:
