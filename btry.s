@@ -11,7 +11,8 @@ start:
 .long 1
 .quad 0x10008, 0x38
 plus28:
-    mov     $10, %r13b
+    push    $9
+    pop     %rdx
     mov     $0x20685720, %ebp # " Wh "
     jmp     plus68
 .byte 0
@@ -36,13 +37,17 @@ plus68:
     push    %rax
 
     call    get_number
-    pop     %rcx
+    pop     %rsi
     push    %rax
 
     # calculate the remaining energy as a percentage
     cdq
     imul    $100, %rax
-    div     %rcx
+    div     %rsi
+
+    # from now on, %rcx/%ecx is only used for dividing by 10
+    mov     $10, %cl
+
     call    add_eax_to_output_string
 
     # prepend "(" and then " Wh " (or " Ah ") to the output string
@@ -51,7 +56,7 @@ plus68:
     movl    %ebp, (%rbx)
 
     # prepend the energy_full (or charge_full) value to the output string
-    xchg    %ecx, %eax
+    xchg    %esi, %eax
     call    add_eax_to_output_string_as_decimal
 
     # prepend "/ " and then " Wh " (or " Ah ") to the output string
@@ -91,9 +96,8 @@ get_number:
     xchg    %eax, %edi # open returns a file descriptor in %rax; read expects it in %rdi
     xchg    %esi, %eax # system call 0 is read
     lea     -9(%rbx), %esi # save file contents read from fd into header bytes
-    push    $9
-    pop     %rdx       # read up to 9 bytes
-    syscall            # the number of bytes read goes into %rax
+    # (%rdx, which specifies the maximum number of bytes to read, is already set to 9)
+    syscall # the number of bytes read goes into %rax
 
     # convert file contents to an integer (stored in %eax)
     lea     -1(%rax), %ecx # subtract 1 so we don't process the newline
@@ -122,7 +126,7 @@ add_eax_to_output_string_as_decimal:
     mov     $100000, %esi # one hundred thousand
     div     %esi          # %eax / 100000 (4-byte divisor)
     cdq                   # clear %edx again for a second division
-    div     %r13d         # %eax / 10 (4-byte divisor)
+    div     %ecx          # %eax / 10 (4-byte divisor)
 
     # we have Wh (or Ah) in %eax (quotient) and the tenths digit in %edx (remainder)
     sub     $2, %ebx
@@ -132,7 +136,7 @@ add_eax_to_output_string_as_decimal:
 # prepend %eax to the output string; invalidates %eax and %edx
 add_eax_to_output_string:
     cdq
-    div     %r13d    # quotient and remainder are stored in %eax and %edx, respectively
+    div     %ecx     # quotient and remainder are stored in %eax and %edx, respectively
     add     $'0, %dl # convert the remainder to ASCII
     dec     %ebx
     mov     %dl, (%rbx)

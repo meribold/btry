@@ -10,7 +10,7 @@ ELF Header:
   Version:                           0x1
   Entry point address:               0x10008
   Start of program headers:          56 (bytes into file)
-  Start of section headers:          2335212204913767745 (bytes into file)
+  Start of section headers:          2335212204918966634 (bytes into file)
   Flags:                             0x250036eb
   Size of this header:               2601 (bytes)
   Size of program headers:           56 (bytes)
@@ -23,6 +23,6 @@ Program Headers:
   Type           Offset             VirtAddr           PhysAddr
                  FileSiz            MemSiz              Flags  Align
   LOAD           0x0000000000000000 0x0000000000010000 0x050fff313cb0050f
-                 0x0000000000000140 0x0000000000000200  RWE    0x3be85000000041e8
+                 0x000000000000013d 0x0000000000000200  RWE    0x3de85000000043e8
 
 There is no dynamic section in this file.
