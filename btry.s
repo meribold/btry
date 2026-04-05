@@ -42,8 +42,9 @@ plus68:
 
     # calculate the remaining energy as a percentage
     cdq
-    imul    $100, %rax
-    div     %rsi
+    mov     $100, %dl
+    mul     %edx
+    div     %esi
 
     # from now on, %rcx/%ecx is only used for dividing by 10
     mov     $10, %cl
