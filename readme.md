@@ -16,11 +16,11 @@ of watt hours.
 ## Installation
 
 ```
-base64 -d <<< '4AEuAQYAAD+R1tX9PhIqqLiC7tM26Rkl412GOAZaMsLDphi6dTMOPSJIV5ULj1tzydl2866
-wAy0MWe/kTaGxK4iHkiHEsJVntYzfmFVw8L8KtfIcHTqJBQWPqCnkfmNH0hTONNw05tVBFN2bfrzoOwGBWHrZ7
-xVDIBcUARu104CoNh4HeqZeGi1dasKnl3ODFtiBr3Cr1BXcjNuo2QD6m6HJSIfaNyAFnJrOwlLWZAfkepMpaEe
-QF5PYEVol2/Fg//3dxKWxn64aPfGLZptIxrjWXttpHjhzEhEOREcoJcNAy1S2SLW7DiUmTcabwMsPw+xWcUau4
-IBBng8wNBeo0fMRhkIaP2ikdfHbF2wA' | unxz -Fraw --lzma2=dict=4K > btry && chmod +x btry
+base64 -d <<< 'AAAAgAD//////////wA/kdbV/T4SKqi4gu7TNukZJeNdhjgGWjLCw6YYunUzDj0iSFeVC4
+9bc8nZdvOusAMtDFnv5E2hsSuIh5IhxLCVZ7WM35hVcPC/CrXyHB06iQUFj6gp5H5jR9IUzjTcNObVQRTdm36
+86DsBgVh62e8VQyAXFAEbtdOAqDYeB3qmXhotXWrCp5dzgxbYga9wq9QV3IzbqNkA+puhyUiH2jcgBZyazsJS
+1mQH5HqTKWhHkBeT2BFaJdvxYP/93cSlsZ+uGj3xi2abSMa41l7baR44cxIRDkRHKCXDQMtUtki1uw4lJk3Gm
+8DLD8PsVnFGruCAQZ4PMDQXqNHzEYZCGj9opHX378AEyP/D5GMA' | unxz > btry && chmod +x btry
 ```
 
 ## Limitations
