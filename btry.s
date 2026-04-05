@@ -101,14 +101,15 @@ get_number:
     syscall # the number of bytes read goes into %rax
 
     # convert file contents to an integer (stored in %eax)
-    lea     -1(%rax), %ecx # subtract 1 so we don't process the newline
     xor     %edi, %edi
 next_char:
-    imul    $10, %edi
     lodsb              # load one character/byte/digit into %al and increment %rsi
     sub     $'0, %al   # convert the character from ASCII
+    js      reached_lf # if the number is negative, we reached the newline
+    imul    $10, %edi
     add     %eax, %edi # add this digit
-    loop    next_char  # loop until %rcx is zero
+    jmp     next_char
+reached_lf:
     xchg    %edi, %eax
     ret
 charge:
