@@ -90,7 +90,7 @@ get_number:
     # read(fd, buffer, 9)
     xchg    %eax, %edi # open returns a file descriptor in %rax; read expects it in %rdi
     xchg    %esi, %eax # system call 0 is read
-    lea     -9(%rbx), %rsi # save file contents read from fd into header bytes
+    lea     -9(%rbx), %esi # save file contents read from fd into header bytes
     push    $9
     pop     %rdx       # read up to 9 bytes
     syscall            # the number of bytes read goes into %rax
