@@ -77,10 +77,12 @@ plus50:
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
 
+path: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
+
 # read the file specified via %rdi; convert the contents to an integer stored in %eax
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    mov     $(p_vaddr + path - start), %edi
+    lea     (path - percent_suffix)(%rbx), %edi
     push    $2
     pop     %rax       # system call 2 is open
     xor     %esi, %esi # 0 means read-only
@@ -145,6 +147,3 @@ add_eax_to_output_string:
     test    %eax, %eax
     jne     add_eax_to_output_string
     ret
-
-path: .ascii "/sys/class/power_supply/BAT0/energy_full"
-end:
