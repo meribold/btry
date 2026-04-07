@@ -14,11 +14,10 @@ start:
 .long 1
 .quad e_entry, e_phoff
 plus28:
-    push    $9
-    pop     %rdx
+    mov     $9, %dl
     mov     $0x20685720, %ebp # " Wh "
+    push    $60
     jmp     plus50
-.byte 0
 percent_suffix: .ascii "%)\n"
 .short e_phentsize
 
@@ -73,7 +72,7 @@ plus50:
     mov     $0x36, %dl
     sub     %bl, %dl
     syscall
-    mov     $60, %al   # system call 60 is exit
+    pop     %rax       # early on we pushed 60, which is the exit system call number
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
 
