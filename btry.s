@@ -78,6 +78,13 @@ plus50:
 
 path: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
 
+charge:
+    mov     $0x4120, %bp # " A"
+
+    # change the path to "/sys/class/power_supply/BAT0/charge_full"
+    movl    $0x72616863, 29(%rdi) # "char"
+    movb    $'e, 34(%rdi)
+
 # read the file specified via %rdi; convert the contents to an integer stored in %eax
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
@@ -113,13 +120,6 @@ next_char:
 reached_lf:
     xchg    %edx, %eax
     ret
-charge:
-    mov     $0x4120, %bp # " A"
-
-    # change the path to "/sys/class/power_supply/BAT0/charge_full"
-    movl    $0x72616863, 29(%rdi) # "char"
-    movb    $'e, 34(%rdi)
-    jmp     get_number
 
 # prepend `%eax / 1000000` with one decimal place to the output string; invalidates %eax,
 # %edx, and %esi
