@@ -16,8 +16,8 @@ start:
 plus28:
     mov     $9, %dl
     mov     $0x20685720, %ebp # " Wh "
-    push    $60
-    jmp     plus50
+    push    $10
+    jmp     plus68
 percent_suffix: .ascii "%)\n"
 .short e_phentsize
 
@@ -25,6 +25,13 @@ percent_suffix: .ascii "%)\n"
 .long 1, 7
 .quad 0, p_vaddr
 plus50:
+    syscall
+    mov     $60, %al   # system call 60 is exit
+    xor     %edi, %edi # we want return code 0
+    syscall            # invoke operating system to exit
+.quad 0x200, 0x200
+
+plus68:
     # read the contents of the file specified by the path at $path into %eax
     call    get_number
 
@@ -33,12 +40,10 @@ plus50:
     push    %rax
 
     call    get_number
-    mov     $1, %edi
     pop     %rsi
-    push    %rax
-    cdq
     # from now on, %rcx/%ecx is only used for dividing by 10
-    mov     $10, %ecx
+    pop     %rcx
+    push    %rax
 
     # calculate the remaining energy as a percentage
     mov     $100, %dl
@@ -67,14 +72,11 @@ plus50:
 
     # write(1, %rbx, $0x10036 - %rbx)
     mov     $1, %al    # system call 1 is write (we know that %eax is zero here)
-    # (%edi, which specifies the file handle, is already set to 1, which is stdout)
+    mov     %eax, %edi # file handle 1 is stdout
     mov     %ebx, %esi # address of string to output
     mov     $0x36, %dl
     sub     %bl, %dl
-    syscall
-    pop     %rax       # early on we pushed 60, which is the exit system call number
-    xor     %edi, %edi # we want return code 0
-    syscall            # invoke operating system to exit
+    jmp     plus50
 
 path: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
 
@@ -88,7 +90,7 @@ charge:
 # read the file specified via %rdi; convert the contents to an integer stored in %eax
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    lea     (path - percent_suffix)(%rbx), %edi
+    lea     122(%rbx), %edi # 122 is `path - percent_suffix`, but yields tighter encoding
     push    $2
     pop     %rax       # system call 2 is open
     xor     %esi, %esi # 0 means read-only
