@@ -25,11 +25,14 @@ percent_suffix: .ascii "%)\n"
 .long 1, 7
 .quad 0, p_vaddr
 plus50:
+    sub     %bl, %dl
     syscall
     mov     $60, %al   # system call 60 is exit
     xor     %edi, %edi # we want return code 0
     syscall            # invoke operating system to exit
-.quad 0x200, 0x200
+.zero 6
+syscall
+.zero 6
 
 plus68:
     # read the contents of the file specified by the path at $path into %eax
@@ -75,7 +78,6 @@ plus68:
     mov     %eax, %edi # file handle 1 is stdout
     mov     %ebx, %esi # address of string to output
     mov     $0x36, %dl
-    sub     %bl, %dl
     jmp     plus50
 
 path: .ascii "/sys/class/power_supply/BAT0/energy_full\0"
@@ -90,7 +92,7 @@ charge:
 # read the file specified via %rdi; convert the contents to an integer stored in %eax
 get_number:
     # e.g. open("/sys/class/power_supply/BAT0/energy_now", O_RDONLY)
-    lea     122(%rbx), %edi # 122 is `path - percent_suffix`, but yields tighter encoding
+    lea     120(%rbx), %edi # 120 is `path - percent_suffix`, but yields tighter encoding
     push    $2
     pop     %rax       # system call 2 is open
     xor     %esi, %esi # 0 means read-only
