@@ -20,7 +20,7 @@ base64 -d <<< 'AAAAgAD//////////wA/kdbV/T4SKqi4gu7TNukZJeNdhjgGWjLCw6YYwm3tgKjiZ
 hz7+A+BEXQGjYrdisdU/fmh6I+bXFgKXsBP1Qihg6wueK0wKD1tL2vQRd8ZjmQi20OduGmiMyPyfsS2cSUUCK
 SpQXtdHbQMRMn1UD6k/HrwFt3i+wzPNoG0tEHEZbJUTvdAVs0xS9PYrTTc4uSskePYWAK8t6VK/pmpItKsGnb
 /qyGaIMl2/5TiqjHXTczFv3YkiNnJ7iqK8CtWhMwMlQxeyRuW3fpYgRKVPNKrX14kKobJSHZy4MuC9TE7lgYX
-YJhBim5yRoO7wnYG3ezKX86Xvw/AFHGG8CTnD49szn/eHZAAA==' | unxz > btry && chmod +x btry
+YJhBim5yRoO7wnYG3ezKX86Xvw/AFHGG8CTnD49szn/eHZAAA==' | unlzma > btry && chmod +x btry
 ```
 
 ## Limitations
