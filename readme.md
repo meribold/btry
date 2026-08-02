@@ -42,6 +42,7 @@ No.
 
 ## Notes
 
-When my ThinkPad X220 is plugged in at the time I wake it from suspend mode, I get the
-`charge_now` file.  When it is not plugged in I get the `energy_now` file.  At least I
-think that's how it works.
+* When my ThinkPad X220 is plugged in at the time I wake it from suspend mode, I get the
+  `charge_now` file.  When it is not plugged in I get the `energy_now` file.  At least I
+  think that's how it works.
+* On my Steam Deck, I had to change `BAT0` to `BAT1`.
